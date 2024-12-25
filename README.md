@@ -6,8 +6,6 @@
 
 <img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html)
 
-The tool handles various types of file formats, delete personal or confidential details and convert them back into their original/user-required format(s). 
-
 ### [Video Demo](https://www.youtube.com/watch?v=C47vACIMZC8) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs)
 
 # Technical Approach to Full-fledged application
