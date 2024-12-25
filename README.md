@@ -24,7 +24,9 @@ During initial conception of the tool, some fundamental constraints were set bef
 
 ![technical datagram](https://github.com/4n33sh/REDACT/blob/main/Technical%20Approach.png)
 
-REDACT utilizes machine learning and natural entity recognition to obtain consistent redaction results & accuracy over time.
+The Privacy of user's data is ensured through multiple secure layers such as DMZ (de-militarized zone) for isolation, secure authenticators (2FA and JSON) and finally encryption for data (while in-transit and storage) to ensure that the training/user data stays secure.
+
+Entity recognition is achieved through spaCy's NLP (with it's large dataset) and the ML Training as well as it's BeRT model was implemented through transformers.
 
 ![prototype gui final](https://github.com/4n33sh/REDACT/blob/main/Prototype%20GUI%20%26%20Functionality.png)
 
