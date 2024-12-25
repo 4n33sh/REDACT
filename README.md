@@ -20,7 +20,7 @@ During initial conception of the tool, some fundamental **constraints** were set
 
 3. **Smart redaction** must be included to redact basic **PIIs/PLLs** like Phone No., Names, Geo-locations, etc. through **natural language processors** and **RegEx identifiers**.
 
-4. The tool must **support all types of file formats** and allow the user to 8*choose from a variety of output formats**.
+4. The tool must **support all types of file formats** and allow the user to **choose from a variety of output formats**.
 
 ![technical datagram](https://github.com/4n33sh/REDACT/blob/main/Technical%20Approach.png)
 
