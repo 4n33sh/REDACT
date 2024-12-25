@@ -2,11 +2,11 @@
 
 **REDACT is an automatic confidential information masking/redaction tool for documents, images, audio and other file formats with minimal manual effort.** 
 
----
-
 <img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html)
 
 ### [Video Demo](https://www.youtube.com/watch?v=C47vACIMZC8) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs)
+
+---
 
 # Technical Approach to Full-fledged application
 
