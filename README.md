@@ -12,6 +12,16 @@ The tool handles various types of file formats, delete personal or confidential 
 
 # Technical Approach to Full-fledged application
 
+During initial conception of the tool, some fundamental constraints were set before proceeding forward:
+
+1. The tool must be secure and respect the privacy of the user's files.
+
+2. Machine Learning models must be implemented for consistent training and be designed for easy model modification to meet the user's specific needs.
+
+3. Smart redaction must be included to redact basic PIIs/PLLs like Phone No., Names, Geo-locations, etc. through natural language processors and RegEx identifiers.
+
+4. The tool must support all types of file formats and allow the user to choose from a variety of output formats.
+
 ![technical datagram](https://github.com/4n33sh/REDACT/blob/main/Technical%20Approach.png)
 
 REDACT utilizes machine learning and natural entity recognition to obtain consistent redaction results & accuracy over time.
