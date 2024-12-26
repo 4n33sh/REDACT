@@ -2,7 +2,7 @@
 
 **REDACT is an automatic confidential information masking/redaction tool for documents, images, audio and other file formats with minimal manual effort.** 
 
-<img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html)
+<img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html) <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
 
 ### [Video Demo](https://www.youtube.com/watch?v=C47vACIMZC8) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs) | [Test Material](https://github.com/4n33sh/REDACT/tree/main/test-material) | [Source Code](https://github.com/4n33sh/REDACT/blob/main/main.py)
 
@@ -28,7 +28,7 @@ The Privacy of user's data is ensured through **multiple secure layers** such as
 
 ![prototype gui final](https://github.com/4n33sh/REDACT/blob/main/Prototype%20GUI%20%26%20Functionality.png)
 
-It's an easy to use **standalone offline program** via an **intuitive interface**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
+It's also has an easy to use **standalone offline program** via an **intuitive interface**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
 
 # Prototype Functionality
 
