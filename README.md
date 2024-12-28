@@ -38,9 +38,9 @@ Consider **picture** redaction, wherein the **text is embedded onto the doc in t
 
 The above process (just like any file format) follows one of the **three grades** of redaction available to the user:
 
-1. GRADE - 1 (LOW): This grade performs **basic black-box/text-replacement** redaction with '[REDACT]'. Here, basic pattern discovery is utilized with **techniques** like **RegEx**, **Rule definitions**, **find & replace**, etc.
+1. GRADE - 1 (LOW): This grade performs **basic black-box/text-replacement** redaction with '[REDACT]'. Here, basic pattern discovery is performed with **techniques** like **RegEx**, **Rule definitions**, **find & replace**, etc.
 
-2. GRADE - 3 (MID): In this grade, the redactable data is **anonymized/masked** and also follows grade 1 redaction methodology. Here, **ML Trained model** redacts previously **left-out** sensitive data by grade 1.
+2. GRADE - 2 (MID): In this grade, the redactable data is **anonymized/masked** and also follows grade 1 redaction methodology. Here, **ML Trained model** redacts previously **left-out** sensitive data by grade 1.
 
 3. GRADE - 3 (HIGH): It is an combination of **grade 1 + grade 2** but, utilizes **NLP** to identify potentially sensitive PIIs and also works in **compliment with TensorFlow's BeRT**. Here, the data recognized can be replaced with **synthetic data** to **preserve meaning/context whilst hiding sensitive data**.
 
