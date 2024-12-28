@@ -38,13 +38,13 @@ Consider **picture** redaction, wherein the **text is embedded onto the doc in t
 
 The three grades of redaction are simply as follows:
 
-1. GRADE - 1 (LOW): This grade performs basic black-box/text-replacement redaction with '[REDACT]'. Here, basic pattern discovery is utilized with techniques like RegEx, Rule definitions, find & replace, etc.
+1. GRADE - 1 (LOW): This grade performs **basic black-box/text-replacement** redaction with '[REDACT]'. Here, basic pattern discovery is utilized with **techniques** like **RegEx**, **Rule definitions**, **find & replace**, etc.
 
-2. GRADE - 3 (MID): In this grade, the redactable data is anonymized/masked and also follows grade 1 redaction methodology. Here, ML Trained model redacts previously left-out sensitive data by grade 1.
+2. GRADE - 3 (MID): In this grade, the redactable data is **anonymized/masked** and also follows grade 1 redaction methodology. Here, **ML Trained model** redacts previously **left-out** sensitive data by grade 1.
 
-3. GRADE - 3 (HIGH): It is an combination of grade 1 + grade 2 but, utilizes NLP to identify potentially sensitive PIIs and also works in compliment with TensorFlow's BeRT. Here, the data recognized can be replaced with synthetic data to preserve meaning/context whilst hiding sensitive data.
+3. GRADE - 3 (HIGH): It is an combination of **grade 1 + grade 2** but, utilizes **NLP** to identify potentially sensitive PIIs and also works in **compliment with TensorFlow's BeRT**. Here, the data recognized can be replaced with **synthetic data** to **preserve meaning/context whilst hiding sensitive data**.
 
-After redaction has been performed, an Audio (.wav), .pdf, image and text formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and later-on be used for future redactions.
+After redaction has been performed, **Audio** (.wav), **.pdf**, **image and text formats** are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and later-on be used as **Training data** for future consistent and better redaction(s).
 
 # Installation and Running
 
