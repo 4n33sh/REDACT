@@ -36,7 +36,7 @@ Consider **picture** redaction, wherein the **text is embedded onto the doc in t
 
 ![picture example](https://github.com/4n33sh/REDACT/blob/main/Image%20Redaction%20Flowchart.png)
 
-The three grades of redaction are simply as follows:
+The above process (just like any file format) follows one of the **three grades** of redaction available to the user:
 
 1. GRADE - 1 (LOW): This grade performs **basic black-box/text-replacement** redaction with '[REDACT]'. Here, basic pattern discovery is utilized with **techniques** like **RegEx**, **Rule definitions**, **find & replace**, etc.
 
