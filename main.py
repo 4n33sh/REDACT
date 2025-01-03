@@ -1,569 +1,218 @@
-#! /root/my_virt_envs/bin/python3
-
-#above microprocessor executes code directly form python .venv package
-#linux terminal implementation: source /location/to/venv/bin/activate
-
-#before running the script, install the dependencies from requirements.txt file:
+#before running the script, install dependencies from requirements.txt:
 #pip install -r requirements.txt
 
-import os
-import re
-import time
-import tkinter as tkin
-from tkinter import messagebox
-from tkinter import scrolledtext
-import customtkinter as ctk
-from tkinterdnd2 import DND_FILES, TkinterDnD
+# NOTE: The program is obfuscated + minified and comments explaining vital code snippets have been delibrately removed.
+# EXPLANATION: Since the program is still in dev. the code is hence not fully revealed. It will be after final-stage/some time..
+# EXPLANATION 2: In the meanwhile, you could still execute the program without any hinderance. Raise an issue if you encounter any problem.
+
+#! /root/my_virt_envs/bin/python3
+
+#above microprocessor executes code directly form python .venv package. modify to suit your venv. path
+#for linux terminal implementation/execution: source /location/to/venv/bin/activate
+
+
+q='[^a-zA-Z\\s]'
+r='/out.pdf'
+s='dbmdz/bert-large-cased-finetuned-conll03-english'
+d='DATE'
+e='GPE'
+f='PERSON'
+g=Exception
+h=open
+V=True
+W='ORG'
+X='disabled'
+Y=str
+O='Arial'
+P='black'
+M='white'
+J='blue'
+K=False
+F='HIGH'
+G='MID'
+H='LOW'
+B='normal'
+C=print
+import os,re as D,time,tkinter as L
+from tkinter import messagebox as Z,scrolledtext as A5
+import customtkinter as A
+from tkinterdnd2 import DND_FILES as A6,TkinterDnD as A7
 from PIL import Image
 import PyPDF2
-from fpdf import FPDF
-from pydub import AudioSegment
+from fpdf import FPDF as t
+from pydub import AudioSegment as i
 import spacy
 from faker import Faker
-import pytesseract
+import pytesseract as A8
 from PIL import Image
-import speech_recognition as sr
-from pydub import AudioSegment
-import pyttsx3
-import numpy as np
-import sounddevice as sd
-import fitz
-import tensorflow as tf
-from transformers import BertTokenizer, TFBertForTokenClassification
-import unicodedata
-
-#load spaCy model (large) for NLP/NER
-
-nlp = spacy.load("en_core_web_lg")	
-fake = Faker()
-
-#load BeRT Tokenizer and model for ML-based entity recog.
-#this will require internet connection (1st time only - later stored in local cache)
-
-tokenizer = BertTokenizer.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
-bert_model = TFBertForTokenClassification.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
-
-#for strictly offline use, download model at https://huggingface.co/dbmdz/bert-large-cased-finetuned-conll03-english
-
-#following code is for offline implementation of huggingface/transformers BeRT model (uncomment 4 use)
-#model_dir = "/path/to/local/model/directory"
-#tokenizer = BertTokenizer.from_pretrained(model_dir)
-#bert_model = TFBertForTokenClassification.from_pretrained(model_dir)
-
-#function to handle the case sensitivity checkbox toggle
-def toggle_case_sensitive():
-	global case_sensitive
-	case_sensitive = case_sensitive_checkbox.get()
-
-#function to handle the ML choice checkbox toggle
-def toggle_ml_choice():
-	global use_ml
-	use_ml = ml_choice_checkbox.get()
-
-def toggle_lock():
-
-	#set the 'lock' emoji to unlocked at start
-	global locked
-	locked = not locked
-	
-	entry1.configure(state='disabled' if locked else 'normal')
-
-	#change the 'lock' button text, emoji and color
-	if locked:
-		lock_button.configure(text="\U0001f512", fg_color="red", text_color="black")  #red background when locked
-	else:
-		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background means unlocked
-
-class PDF(FPDF):
-
-	#generate the header of PDF file
-	def header(self):
-		# Add a title to the PDF
-		self.set_font('Arial', 'B', 12)
-		self.cell(0, 10, 'My PDF Title', 0, 1, 'C')
-		self.ln(10)
-	
-	#generate footer of PDF file
-	def footer(self):
-		# Add page number
-		self.set_y(-15)
-		self.set_font('Arial', 'I', 8)
-		self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
-
-def show_scroll_messagebox(title, message):
-
-	#create an new top-level window
-	messagebox = tkin.Toplevel()
-	messagebox.title(title)
-
-	#create a Scrolled-Text widget
-	text_area = scrolledtext.ScrolledText(messagebox, wrap=tkin.WORD, width=50, height=10)
-	text_area.insert(tkin.END, message)
-	text_area.config(state=tkin.DISABLED)  #read-only configuration
-	text_area.pack(padx=10, pady=10)
-
-	#added an 'OK' button to close the dialog
-	ok_button = tkin.Button(messagebox, text="OK", command=messagebox.destroy)
-	ok_button.pack(pady=(0, 10))
-
-	messagebox.transient()  #make it modal
-	messagebox.grab_set() #prevent interaction with other windows when displayed
-
-def text_to_speech(text, output_path):
-
-	#initialize the text-to-speech engine
-	engine = pyttsx3.init()
-	voices = engine.getProperty('voices')
-
-	#Set properties (voice, rate, volume)
-	engine.setProperty('rate', 18)  #speed of speech (18wpm instead of 120-135wpm bcz it then becomes incomprehensible)
-	engine.setProperty('volume', 1.0)  #vol (0.0 to 1.0) range
-	
-	engine.setProperty('voice', voices[1].id)  #change da index to select different voices
-	
-	#use a callback to get the audio data
-	def callback(indata, frames, time, status):
-		if status:
-			print(status)
-		sd.play(indata, samplerate=44100)
-
-	#Generate audio fyle
-	engine.save_to_file(text, "/tmp/text-to-speech-output.wav")
-	engine.runAndWait()
-
-	audio = AudioSegment.from_wav("/tmp/text-to-speech-output.wav")
-	faster_audio = audio.speedup(playback_speed=1.1)
-	faster_audio.export(output_path + "/text-to-speech-out.wav", format="wav")
-
-	#to play generated file in real-time (un-comment following lines)
-	
-	# audio_data = np.fromfile(output_path + "/text-to-speech-output.wav", dtype=np.int16)
-	# sd.play(audio_data, samplerate=44100)
-	# sd.wait()  # Wait until the sound has finished playing
-    
-def outputs(text, file_path):
-	
-	#find path of file and later-on output redacted-file with appropriate extension
-	output_path = os.path.dirname(file_path)
-	
-	#create an new pdf with the redacted text formatted into it
-	pdf = FPDF()
-	pdf.add_page()
-	pdf.set_font("Arial", size = 15)
-	formatted_text = text.replace("\n", "\n\n")
-	pdf.multi_cell(0, 10, formatted_text)
-	pdf.output(output_path + "/out.pdf")
-	
-	#clean the text before sending for txt-to-speech engine
-	#eliminates anyother character (like cyrillic chars and numbers) than A-Z
-	#here 'NFC' means we are considering cyrillic chatacters as pre-accented and one unit
-	cleaned_text = re.sub(r'[^a-zA-Z\s]', '', unicodedata.normalize('NFC', text))
-	
-	#calls the text_to_speech function
-	text_to_speech(cleaned_text, output_path)
-	
-#enhanced RegEx patterns 4 phone numbers (with area/country code support), credit cards, SSNs, and aadhar nos.
-phone_pattern = r'\b(?:\+?\d{1,3}\s?[-.\(]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}|\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4})\b'
-credit_card_pattern = r'\b(?:\d{4}[-\s]??\d{4}[-\s]??\d{4}[-\s]??\d{4})\b'	
-ssn_pattern = r'\b\d{3}[-.\s]??\d{2}[-.\s]??\d{4}\b'
-aadhar_pattern = r'\b\d{4}[-\s]??\d{4}[-\s]??\d{4}\b'
-
-def redact_with_regex(page_text, pattern, page):
-	matches = re.finditer(pattern, page_text)
-	for match in matches:
-		text = match.group(0)  #get the matched text
-		text_instances = page.search_for(text)  #search for text in the page
-		for inst in text_instances:
-			rect = fitz.Rect(inst)  #bound rectangle of the matched text
-			page.add_redact_annot(rect, fill=(0, 0, 0))  #add a black box over the matched text
-
-#main function to redact keywords and sensitive information in the PDF
-def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
-	#open input PDF
-	pdf_document = fitz.open(input_pdf_path)
-
-	#iterate through each page
-	for page in pdf_document:
-		page_text = page.get_text("text")  #extract text from the page
-
-		#if keyword is provided, redact it
-		if keyword:
-			text_instances = page.search_for(keyword)  #find instances of keyword
-			for inst in text_instances:
-				rect = fitz.Rect(inst)
-				page.add_redact_annot(rect, fill=(0, 0, 0))  #add black box over keyword
-			page.apply_redactions()  #save performed redactions for keyword
-
-		else:  #if no keyword provided, proceed with NLP and regex-based redactions
-			#redact spaCy recognized entities
-			doc = nlp(page_text)
-			for ent in doc.ents:
-				if ent.label_ in ["PERSON", "ORG", "GPE", "DATE"]:  #add more labels if necessary
-					text_instances = page.search_for(ent.text)  #search for the entity text
-					for inst in text_instances:
-						rect = fitz.Rect(inst)  #bound rectangle of the entity
-						page.add_redact_annot(rect, fill=(0, 0, 0))  #add black box over entity
-
-			#redact sensitive information using the provided regex patterns
-			redact_with_regex(page_text, phone_pattern, page)  #redact phone numbers
-			redact_with_regex(page_text, credit_card_pattern, page)  #redact credit cards
-			redact_with_regex(page_text, ssn_pattern, page)  #redact SSNs
-			redact_with_regex(page_text, aadhar_pattern, page)  #redact Aadhar numbers
-
-			page.apply_redactions()  #apply redactions to the page
-	
-	#save the modified PDF to the output path
-	pdf_document.save(output_pdf_path)
-
-	#take and store logs for pdf
-	logs_file = open(logs_name_file, "a") 
-	logs_file.write(str(pdf_document.metadata)+"\n\n")
-	logs_file.close()
-	
-	#close the pdf document to prevent process hangup/resourse waste
-	pdf_document.close()
-	
-def get_bert_entities(text):
-	"""Function to extract entities using BERT."""
-	inputs = tokenizer(text, return_tensors="tf", truncation=True, padding=True)
-	outputs = bert_model(**inputs)
-	logits = outputs.logits
-	predicted_ids = tf.argmax(logits, axis=-1)
-
-	tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
-	predicted_labels = [tokenizer.convert_ids_to_tokens(predicted_ids[0].numpy())]
-	
-	#map BeRT output to entity labels
-	entity_labels = []
-	for token, label in zip(tokens, predicted_labels[0]):
-		if label != "O":  #here, "O" means no entity
-			entity_labels.append((token, label))
-
-	return entity_labels
-
-def redact_phone(match,redaction_level):
-	phone = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED PHONE]"
-	elif redaction_level == "MID":
-		#mask phone number with 'XXX-XXX-XXXX'
-		return 'XXX-XXX-' + phone[-4:]
-	elif redaction_level == "HIGH":
-		return fake.phone_number()
-
-def redact_credit_card(match,redaction_level):
-	cc = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED CREDIT CARD]"
-	elif redaction_level == "MID":
-		return 'XXXX-XXXX-XXXX-' + cc[-4:]
-	elif redaction_level == "HIGH":
-		return fake.credit_card_number()
-
-def redact_ssn(match,redaction_level):
-	ssn = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED SSN]"
-	elif redaction_level == "MID":
-		return 'XXX-XX-' + ssn[-4:]
-	elif redaction_level == "HIGH":
-		return fake.ssn()
-
-def redact_aadhar(match,redaction_level):
-	aadhar = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED AADHAR]"
-	elif redaction_level == "MID":
-		return 'XXXX-XXXX-' + aadhar[-4:]
-	elif redaction_level == "HIGH":
-		return fake.ssn()  #aaadhar is 12-digit number, but fake.ssn() works for gen. format
-		
-#implemented nlp/ml into single pass
-#utilized re.sub and re.cache for faster replacement and dict. caching
-#implemented helpr function for synthetic_data gen. and rep.
-#must implement parallelization, better caching and Profiling (cProfile & line_profiler)
-
-def redact_text(text, redaction_level, keyword=None):
-
-	#apply keyword redaction if provided
-	if keyword:
-		return text.replace(keyword, "[REDACTED]").replace(f" {keyword} ", " [REDACTED] ")
-
-	doc = nlp(text)
-	redacted_text = text
-	
-	#apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
-	text = re.sub(phone_pattern, lambda match: redact_phone(match, redaction_level), text)
-	text = re.sub(credit_card_pattern, lambda match: redact_credit_card(match, redaction_level), text)
-	text = re.sub(ssn_pattern, lambda match: redact_ssn(match, redaction_level), text)
-	text = re.sub(aadhar_pattern, lambda match: redact_aadhar(match, redaction_level), text)
-		
-	#obtain BeRT entities
-	bert_entities = get_bert_entities(text)
-
-	#Combine BeRT and spaCy entities into one list 4 a single pass
-	entities_to_redact = []
-
-	#Add BeRT entities (PER, ORG, LOC, MISC)
-	if ml_choice_checkbox.get() == 1:
-		print("ML Choice: Selected")
-		for entity, label in bert_entities:
-			if label in ["PER", "ORG", "LOC", "MISC"]:
-				entities_to_redact.append((entity, label))
-	else:
-		print("ML Choice: Not Selected")
-
-	#add spaCy entities (PERSON, ORG, GPE, DATE)
-	for ent in doc.ents:
-		if ent.label_ in ["PERSON", "ORG", "GPE", "DATE"]:
-			entities_to_redact.append((ent.text, ent.label_))
-
-	#pre-compute synthetic data 4 high redaction level (to prevent redundant generation)
-	synthetic_data = {}
-
-	def get_synthetic_data(label):
-		"""Generate synthetic data for a specific entity label, caching results."""
-		if label not in synthetic_data:
-			if label == "PERSON":
-				synthetic_data[label] = fake.name()
-			elif label == "ORG":
-				synthetic_data[label] = fake.company()
-			elif label == "LOC" or label == "GPE":
-				synthetic_data[label] = fake.city()
-			elif label == "MISC":
-				synthetic_data[label] = fake.word()
-			elif label == "DATE":
-				synthetic_data[label] = fake.date()
-		return synthetic_data[label]
-
-	#Create replacement map 4 entities and their redacted forms
-	replacement_map = {}
-
-	for entity, label in entities_to_redact:
-	
-		if redaction_level == "LOW":
-			replacement_map[entity] = "[REDACTED]"
-
-		elif redaction_level == "MID":
-
-			#Mask all letters in b/w but the first and last character
-			#entity[0] is first letter
-			# '*' * (len(entity)-2) multiplies asterisk (excluding first and last letter)
-			#entity[-1] is last letter
-			#if else to check if greater than 2 letters
-			
-			masked_entity = entity[0] + '*' * (len(entity) - 2) + entity[-1] if len(entity) > 2 else entity
-			replacement_map[entity] = masked_entity
-		
-		elif redaction_level == "HIGH":
-		
-			#Replace with synthetic data
-			synthetic_entity = get_synthetic_data(label)
-			replacement_map[entity] = synthetic_entity
-    
-	#utilize RegEx to replace all entities in 1 go
-	def replace_entity(match):
-		entity = match.group(0)
-		return replacement_map.get(entity, entity)  #use the replacement if found, else just return original val.
-
-	#Build an regular expression pattern (matching all entities)
-	#We create the pattern that matches any of the entities to perform redaction
-	entity_pattern = re.compile("|".join(re.escape(entity) for entity in replacement_map.keys()))
-
-	#Perform the replacement in one pass using re.sub (instead of replace which is a bit inefficient)
-	redacted_text = entity_pattern.sub(replace_entity, text)
-
-	return redacted_text
-
-
-def preprocess_and_recognize_audio(audio_file):
-
-	audio = AudioSegment.from_file(audio_file).set_channels(1).set_frame_rate(16000)
-	processed_file = "/tmp/output-processed-audio.wav"
-	audio.export(processed_file, format="wav")
-	
-	recognizer = sr.Recognizer()
-	
-	with sr.AudioFile(processed_file) as source:
-		audio_data = recognizer.record(source)
-	try:
-		text = recognizer.recognize_sphinx(audio_data)
-		print("Processed Audio Speech:", text)
-		return text
-	except sr.UnknownValueError:
-		print("Sorry, the audio could not be deciphered. Please provide a clear .wav/.flacc audio file.")
-	except sr.RequestError as e:
-		print(f"Could not perform conversion: {e}")
-	
-	os.remove(processed_file)
-
-def drop_and_identify(file_path,grade):
-
-	_, extension = os.path.splitext(file_path)
-
-	if extension == ".pdf":
-		keyword = entry1.get()
+import speech_recognition as a
+from pydub import AudioSegment as i
+import pyttsx3,numpy as AT,sounddevice as A9,fitz as b,tensorflow as AA
+from transformers import BertTokenizer as AB,TFBertForTokenClassification as AC
+import unicodedata as u
+v=spacy.load('en_core_web_lg')
+E=Faker()
+j=AB.from_pretrained(s)
+AD=AC.from_pretrained(s)
+def AE():global w;w=A4.get()
+def AF():global x;x=p.get()
+def AG():
+	global Q;Q=not Q;R.configure(state=X if Q else B)
+	if Q:o.configure(text='🔒',fg_color='red',text_color=P)
+	else:o.configure(text='🔓',fg_color='green',text_color=P)
+class AU(t):
+	def header(A):A.set_font(O,'B',12);A.cell(0,10,'My PDF Title',0,1,'C');A.ln(10)
+	def footer(A):A.set_y(-15);A.set_font(O,'I',8);A.cell(0,10,f"Page {A.page_no()}",0,0,'C')
+def k(title,message):OO000O000O000O0O0=L.Toplevel();OO000O000O000O0O0.title(title);O0OOOOOO00O00O0OO=A5.ScrolledText(OO000O000O000O0O0,wrap=L.WORD,width=50,height=10);O0OOOOOO00O00O0OO.insert(L.END,message);O0OOOOOO00O00O0OO.config(state=L.DISABLED);O0OOOOOO00O00O0OO.pack(padx=10,pady=10);O000000OO00O00OO0=L.Button(OO000O000O000O0O0,text='OK',command=OO000O000O000O0O0.destroy);O000000OO00O00OO0.pack(pady=(0,10));OO000O000O000O0O0.transient();OO000O000O000O0O0.grab_set()
+def AH(text,output_path):
+	O0O000000O00O00O0='/tmp/text-to-speech-output.wav';O00O0O0OOOOO0OOOO=pyttsx3.init();OOOOOO0O0O0O00O0O=O00O0O0OOOOO0OOOO.getProperty('voices');O00O0O0OOOOO0OOOO.setProperty('rate',18);O00O0O0OOOOO0OOOO.setProperty('volume',1.);O00O0O0OOOOO0OOOO.setProperty('voice',OOOOOO0O0O0O00O0O[1].id)
+	def O0OO0O0O000OO0OOO(indata,frames,time,status):
+		O0000O0OOOO0OO0O0=status
+		if O0000O0OOOO0OO0O0:C(O0000O0OOOO0OO0O0)
+		A9.play(indata,samplerate=44100)
+	O00O0O0OOOOO0OOOO.save_to_file(text,O0O000000O00O00O0);O00O0O0OOOOO0OOOO.runAndWait();O00O000OOOOO00000=i.from_wav(O0O000000O00O00O0);O00OOOOOO00OOOOOO=O00O000OOOOO00000.speedup(playback_speed=1.1);O00OOOOOO00OOOOOO.export(output_path+'/text-to-speech-out.wav',format='wav')
+def y(text,file_path):OO0000OO00000O0OO=os.path.dirname(file_path);OOO0O0000O0OO00OO=t();OOO0O0000O0OO00OO.add_page();OOO0O0000O0OO00OO.set_font(O,size=15);O000OOO0OOO00OO00=text.replace('\n','\n\n');OOO0O0000O0OO00OO.multi_cell(0,10,O000OOO0OOO00OO00);OOO0O0000O0OO00OO.output(OO0000OO00000O0OO+r);O0O0000OO0O0000O0=D.sub(q,'',u.normalize('NFC',text));AH(O0O0000OO0O0000O0,OO0000OO00000O0OO)
+z='\\b(?:\\+?\\d{1,3}\\s?[-.\\(]?\\(?\\d{1,4}\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}|\\(?\\d{1,4}\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4})\\b'
+A0='\\b(?:\\d{4}[-\\s]??\\d{4}[-\\s]??\\d{4}[-\\s]??\\d{4})\\b'
+A1='\\b\\d{3}[-.\\s]??\\d{2}[-.\\s]??\\d{4}\\b'
+A2='\\b\\d{4}[-\\s]??\\d{4}[-\\s]??\\d{4}\\b'
+def c(page_text,pattern,page):
+	OOOOO0O0O00OO000O=D.finditer(pattern,page_text)
+	for O0O00OOOO00OO00O0 in OOOOO0O0O00OO000O:
+		O0O000O0OO0OO0000=O0O00OOOO00OO00O0.group(0);O00O00OOOO0O0OO0O=page.search_for(O0O000O0OO0OO0000)
+		for O0O0O0OO0OOOOO0OO in O00O00OOOO0O0OO0O:O0OO0OO0O0O000O00=b.Rect(O0O0O0OO0OOOOO0OO);page.add_redact_annot(O0OO0OO0O0O000O00,fill=(0,0,0))
+def AI(input_pdf_path,output_pdf_path,keyword=None):
+	OO0O0O0O000OOO00O=keyword;O00000000000OOO0O=b.open(input_pdf_path)
+	for OO000O0OO0000OOO0 in O00000000000OOO0O:
+		O0O000OOOOOOO0OO0=OO000O0OO0000OOO0.get_text('text')
+		if OO0O0O0O000OOO00O:
+			OOO00O0OO0000O0OO=OO000O0OO0000OOO0.search_for(OO0O0O0O000OOO00O)
+			for O0O0000000O00OOO0 in OOO00O0OO0000O0OO:O0OOOOOOOO00OO0OO=b.Rect(O0O0000000O00OOO0);OO000O0OO0000OOO0.add_redact_annot(O0OOOOOOOO00OO0OO,fill=(0,0,0))
+			OO000O0OO0000OOO0.apply_redactions()
+		else:
+			OO00O000O0O00000O=v(O0O000OOOOOOO0OO0)
+			for OOO0O0OOO0O0OO0OO in OO00O000O0O00000O.ents:
+				if OOO0O0OOO0O0OO0OO.label_ in[f,W,e,d]:
+					OOO00O0OO0000O0OO=OO000O0OO0000OOO0.search_for(OOO0O0OOO0O0OO0OO.text)
+					for O0O0000000O00OOO0 in OOO00O0OO0000O0OO:O0OOOOOOOO00OO0OO=b.Rect(O0O0000000O00OOO0);OO000O0OO0000OOO0.add_redact_annot(O0OOOOOOOO00OO0OO,fill=(0,0,0))
+			c(O0O000OOOOOOO0OO0,z,OO000O0OO0000OOO0);c(O0O000OOOOOOO0OO0,A0,OO000O0OO0000OOO0);c(O0O000OOOOOOO0OO0,A1,OO000O0OO0000OOO0);c(O0O000OOOOOOO0OO0,A2,OO000O0OO0000OOO0);OO000O0OO0000OOO0.apply_redactions()
+	O00000000000OOO0O.save(output_pdf_path);OO0O000O0O00OOOOO=h(A3,'a');OO0O000O0O00OOOOO.write(Y(O00000000000OOO0O.metadata)+'\n\n');OO0O000O0O00OOOOO.close();O00000000000OOO0O.close()
+def AJ(text):
+	O00OO00OO0000O00O=j(text,return_tensors='tf',truncation=V,padding=V);O00OOOOO0OOOO00O0=AD(**O00OO00OO0000O00O);OO00OO00O0000OOOO=O00OOOOO0OOOO00O0.logits;O0O0000O0O0000OOO=AA.argmax(OO00OO00O0000OOOO,axis=-1);O0OOO00OO0O0OO0OO=j.convert_ids_to_tokens(O00OO00OO0000O00O['input_ids'][0]);OOOO000OOOOO0O0O0=[j.convert_ids_to_tokens(O0O0000O0O0000OOO[0].numpy())];OO00OOO0O0O00OO0O=[]
+	for(OOOO0O000O0OO0O0O,OO0O00O0000OO00OO)in zip(O0OOO00OO0O0OO0OO,OOOO000OOOOO0O0O0[0]):
+		if OO0O00O0000OO00OO!='O':OO00OOO0O0O00OO0O.append((OOOO0O000O0OO0O0O,OO0O00O0000OO00OO))
+	return OO00OOO0O0O00OO0O
+def AK(match,redaction_level):
+	OO0O00O00OOOO00OO=redaction_level;O0O0OOO000O00O0OO=match.group(0)
+	if OO0O00O00OOOO00OO==H:return'[REDACTED PHONE]'
+	elif OO0O00O00OOOO00OO==G:return'XXX-XXX-'+O0O0OOO000O00O0OO[-4:]
+	elif OO0O00O00OOOO00OO==F:return E.phone_number()
+def AL(match,redaction_level):
+	OOO0OOOOO0OO0O0O0=redaction_level;OOOOO0O00000O00OO=match.group(0)
+	if OOO0OOOOO0OO0O0O0==H:return'[REDACTED CREDIT CARD]'
+	elif OOO0OOOOO0OO0O0O0==G:return'XXXX-XXXX-XXXX-'+OOOOO0O00000O00OO[-4:]
+	elif OOO0OOOOO0OO0O0O0==F:return E.credit_card_number()
+def AM(match,redaction_level):
+	O00000000OO00O000=redaction_level;O000OOO0O00OOO0OO=match.group(0)
+	if O00000000OO00O000==H:return'[REDACTED SSN]'
+	elif O00000000OO00O000==G:return'XXX-XX-'+O000OOO0O00OOO0OO[-4:]
+	elif O00000000OO00O000==F:return E.ssn()
+def AN(match,redaction_level):
+	O0OOO0000O000000O=redaction_level;OOOO0000O000000O0=match.group(0)
+	if O0OOO0000O000000O==H:return'[REDACTED AADHAR]'
+	elif O0OOO0000O000000O==G:return'XXXX-XXXX-'+OOOO0000O000000O0[-4:]
+	elif O0OOO0000O000000O==F:return E.ssn()
+def l(text,redaction_level,keyword=None):
+	O00O000000OOOOO0O='MISC';O0OOOO00OO0OO000O='LOC';O00O00OO0OOO0OO0O='[REDACTED]';OO0OO0O00000O00O0=keyword;OO0O000OOOO00000O=redaction_level;OO0OOO00O00000OO0=text
+	if OO0OO0O00000O00O0:return OO0OOO00O00000OO0.replace(OO0OO0O00000O00O0,O00O00OO0OOO0OO0O).replace(f" {OO0OO0O00000O00O0} ",' [REDACTED] ')
+	O0OO000O00OO0O000=v(OO0OOO00O00000OO0);OOOOO000O00OO0OOO=OO0OOO00O00000OO0;OO0OOO00O00000OO0=D.sub(z,lambda match:AK(match,OO0O000OOOO00000O),OO0OOO00O00000OO0);OO0OOO00O00000OO0=D.sub(A0,lambda match:AL(match,OO0O000OOOO00000O),OO0OOO00O00000OO0);OO0OOO00O00000OO0=D.sub(A1,lambda match:AM(match,OO0O000OOOO00000O),OO0OOO00O00000OO0);OO0OOO00O00000OO0=D.sub(A2,lambda match:AN(match,OO0O000OOOO00000O),OO0OOO00O00000OO0);OOOO0O0OO0OOO0O0O=AJ(OO0OOO00O00000OO0);OOO0000OO00O000OO=[]
+	if p.get()==1:
+		C('ML Choice: Selected')
+		for(OO00OOO00O0OOOOO0,OOOOO00000OO00OO0)in OOOO0O0OO0OOO0O0O:
+			if OOOOO00000OO00OO0 in['PER',W,O0OOOO00OO0OO000O,O00O000000OOOOO0O]:OOO0000OO00O000OO.append((OO00OOO00O0OOOOO0,OOOOO00000OO00OO0))
+	else:C('ML Choice: Not Selected')
+	for O0O00O00000OO0OO0 in O0OO000O00OO0O000.ents:
+		if O0O00O00000OO0OO0.label_ in[f,W,e,d]:OOO0000OO00O000OO.append((O0O00O00000OO0OO0.text,O0O00O00000OO0OO0.label_))
+	O0000000O0OO0O0O0={}
+	def OO0O00O000O0O000O(label):
+		O0OOOO00O000O0OO0=label
+		if O0OOOO00O000O0OO0 not in O0000000O0OO0O0O0:
+			if O0OOOO00O000O0OO0==f:O0000000O0OO0O0O0[O0OOOO00O000O0OO0]=E.name()
+			elif O0OOOO00O000O0OO0==W:O0000000O0OO0O0O0[O0OOOO00O000O0OO0]=E.company()
+			elif O0OOOO00O000O0OO0==O0OOOO00OO0OO000O or O0OOOO00O000O0OO0==e:O0000000O0OO0O0O0[O0OOOO00O000O0OO0]=E.city()
+			elif O0OOOO00O000O0OO0==O00O000000OOOOO0O:O0000000O0OO0O0O0[O0OOOO00O000O0OO0]=E.word()
+			elif O0OOOO00O000O0OO0==d:O0000000O0OO0O0O0[O0OOOO00O000O0OO0]=E.date()
+		return O0000000O0OO0O0O0[O0OOOO00O000O0OO0]
+	OOO000000OO0OO0OO={}
+	for(OO00OOO00O0OOOOO0,OOOOO00000OO00OO0)in OOO0000OO00O000OO:
+		if OO0O000OOOO00000O==H:OOO000000OO0OO0OO[OO00OOO00O0OOOOO0]=O00O00OO0OOO0OO0O
+		elif OO0O000OOOO00000O==G:OOOOOOOOO000OO0O0=OO00OOO00O0OOOOO0[0]+'*'*(len(OO00OOO00O0OOOOO0)-2)+OO00OOO00O0OOOOO0[-1]if len(OO00OOO00O0OOOOO0)>2 else OO00OOO00O0OOOOO0;OOO000000OO0OO0OO[OO00OOO00O0OOOOO0]=OOOOOOOOO000OO0O0
+		elif OO0O000OOOO00000O==F:OOOO0OO00O000O0OO=OO0O00O000O0O000O(OOOOO00000OO00OO0);OOO000000OO0OO0OO[OO00OOO00O0OOOOO0]=OOOO0OO00O000O0OO
+	def OOO0OO0OO0O00OOOO(match):O0O0O00O00O00O00O=match.group(0);return OOO000000OO0OO0OO.get(O0O0O00O00O00O00O,O0O0O00O00O00O00O)
+	O0O0O000OOOOOO00O=D.compile('|'.join(D.escape(OOOO000OO0O00O0O0)for OOOO000OO0O00O0O0 in OOO000000OO0OO0OO.keys()));OOOOO000O00OO0OOO=O0O0O000OOOOOO00O.sub(OOO0OO0OO0O00OOOO,OO0OOO00O00000OO0);return OOOOO000O00OO0OOO
+def AO(audio_file):
+	O0O0O0O00O00000O0=i.from_file(audio_file).set_channels(1).set_frame_rate(16000);O000OOOO000O0OO00='/tmp/output-processed-audio.wav';O0O0O0O00O00000O0.export(O000OOOO000O0OO00,format='wav');O0OO00O00OO0O0OOO=a.Recognizer()
+	with a.AudioFile(O000OOOO000O0OO00)as O0O0000OO0O0O0O00:O0O00OOO00OO00000=O0OO00O00OO0O0OOO.record(O0O0000OO0O0O0O00)
+	try:OOO0OO00O00OOO0OO=O0OO00O00OO0O0OOO.recognize_sphinx(O0O00OOO00OO00000);C('Processed Audio Speech:',OOO0OO00O00OOO0OO);return OOO0OO00O00OOO0OO
+	except a.UnknownValueError:C('Sorry, the audio could not be deciphered. Please provide a clear .wav/.flacc audio file.')
+	except a.RequestError as O00O00O00000O000O:C(f"Could not perform conversion: {O00O00O00000O000O}")
+	os.remove(O000OOOO000O0OO00)
+def AP(file_path,grade):
+	OO0O0O000O0OOO0OO=grade;OO0O00O0000OO0000='Error';OO0O00OOO0OOO0O0O=file_path;OOOO0000O0O0O0OOO,OOO0O0OOO00O00O00=os.path.splitext(OO0O00OOO0OOO0O0O)
+	if OOO0O0OOO00O00O00=='.pdf':
+		O0OOOOOO00000OOO0=R.get()
 		try:
-			with open(file_path, 'rb') as file:
-				reader = PyPDF2.PdfReader(file)
-				text = []
-				for page in reader.pages:
-					text.append(page.extract_text())
-				red_text = "\n".join(text)
-
-				#ensure the redacted output is properly encoded in UTF-8
-				redacted_output = redact_text(red_text, grade, keyword)
-
-				#assuming redact_keyword_in_pdf function handles PDF redaction well
-				output_path = os.path.dirname(file_path) + "/out.pdf"
-				redact_keyword_in_pdf(file_path, output_path, keyword)
-
-				#display the redacted output with proper encoding
-				show_scroll_messagebox("Redacted Output [PDF]", redacted_output)
-
-		except Exception as exp:
-			messagebox.showerror("Error", f"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.\n{str(exp)}")
-
-	elif extension == ".wav":
-		text = preprocess_and_recognize_audio(file_path)
-		keyword = entry1.get()
-		try:
-			#handle redaction for Latin characters in the transcribed text
-			redacted_text = redact_text(text, grade, keyword)
-
-			#ensure UTF-8 encoding for the redacted text
-			show_scroll_messagebox("Redacted Output [AUDIO]", redacted_text)
-			outputs(redacted_text, file_path)
-
-		except Exception as exp:
-			messagebox.showerror("Error", f"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.\n{str(exp)}")
-
-	elif extension == ".png" or extension == ".jpg" or extension == ".jpeg":
-		try:
-			text = pytesseract.image_to_string(file_path)
-			print(f"Before Redaction: {text}")
-
-			keyword = entry1.get()
-			
-			#clean the text before sending for img-to-txt engine
-			#eliminates anyother character (like cyrillic chars and numbers) than A-Z
-			#here 'NFC' means we are considering cyrillic chatacters as pre-accented and one unit
-			cleaned_text = re.sub(r'[^a-zA-Z\s]', '', unicodedata.normalize('NFC', text))
-
-			#Handle text redaction for Latin characters
-			redacted_text = redact_text(cleaned_text, grade, keyword)
-
-			#ensure UTF-8 encoding for the redacted text before print
-			#display redacted text as-is
-			show_scroll_messagebox("Redacted Output [IMAGE]", redacted_text)
-			outputs(redacted_text, file_path)
-
-		except Exception as exp:
-			messagebox.showerror("Error", f"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.\n{str(exp)}")
-
-	else:
-		messagebox.showerror("Error", "We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.")
-
-
-def drag_and_drop(grade):
-
-	#initialize root window with CustomTkinter
-	root = TkinterDnD.Tk()
-	
-	root.title("Drag-n-Drop")
-	root.geometry("400x200")
-	root.resizable(False, False)
-	
-	label = tkin.Label(root, text="Drag-n-Drop The File Here! \n \n(PDF, TXT, PNG, JPEG, JPG, WAV, FLACC, MP3)", padx=10, pady=10, bd = 2, relief="raised")
-	label.pack(expand=True, fill=tkin.BOTH)
-    
-	#Registering the drop target for drag and drop
-	root.drop_target_register(DND_FILES)
-	
-	#Reset all buttons to normal state with gray background
-	add_button1.configure(fg_color="white", bg_color="gray", state="normal")
-	add_button2.configure(fg_color="white", bg_color="gray", state="normal")
-	add_button3.configure(fg_color="white", bg_color="gray", state="normal")
-	
-	#Change button styles based on the selected grade
-	if grade == "LOW":
-		add_button1.configure(fg_color="black", bg_color="yellow", state="disabled")
-		add_button2.configure(fg_color="gray", bg_color="blue", state="normal")
-		add_button3.configure(fg_color="gray", bg_color="blue", state="normal")
-		print("LOW")
-	elif grade == "MID":
-		add_button1.configure(fg_color="gray", bg_color="blue", state="normal")
-		add_button2.configure(fg_color="black", bg_color="yellow", state="disabled")
-		add_button3.configure(fg_color="gray", bg_color="blue", state="normal")
-		print("MID")
-	elif grade == "HIGH":
-		add_button1.configure(fg_color="gray", bg_color="blue", state="normal")
-		add_button2.configure(fg_color="gray", bg_color="blue", state="normal")
-		add_button3.configure(fg_color="black", bg_color="yellow", state="disabled")
-		print("HIGH")
-	root.dnd_bind('<<Drop>>', lambda event:drop_and_identify(event.data,grade))
-	root.mainloop()
-
-#set custom color theme
-ctk.set_appearance_mode("dark")  #change to 'Light' or 'Dark' if needed
-ctk.set_default_color_theme("blue")  #dev can choose a different theme
-
-window = ctk.CTk()
-
-window.title("RE-DACT v4.1")
-window.geometry("600x400")
-window.resizable(False, False)
-
-logs_name_file = "/root/Desktop/logs-" + time.strftime("%Y%m%d-%H%M%S") + ".txt"
-logs_file = open(logs_name_file, "x")
-logs_file.close()
-
-#function to handle lock toggle
-locked = False
-
-#variables for case sensitivity and ML choice
-case_sensitive = False
-use_ml = False
-
-#sidebar Frame
-sidebar_frame = ctk.CTkFrame(window, width=300, height=400, corner_radius=10)
-sidebar_frame.pack(side="left", fill="y", padx=10, pady=10)
-
-#Main frame
-main_frame = ctk.CTkFrame(window, width=500, height=400, corner_radius=10)
-main_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
-
-#label and entry in the main frame
-label1 = ctk.CTkLabel(main_frame, text="\nEnter The keyword to Redact: \n", font=("Arial", 15), text_color="white")
-label1.pack(pady=(10, 5))
-
-entry1 = ctk.CTkEntry(main_frame, placeholder_text="Enter keyword here...", width=250, text_color="white")
-entry1.pack(pady=5)
-
-#lock button in sidebar
-lock_button = ctk.CTkButton(main_frame, text="\U0001f513", command=toggle_lock, width=50, fg_color="green")
-lock_button.pack(pady=(10, 10))
-
-#grade selector label in the sidebar
-label2 = ctk.CTkLabel(main_frame, text="\nChoose the Grade of Redaction: \n", font=("Arial", 15), text_color="white")
-label2.pack(pady=(10, 5))
-
-#grade buttons in the sidebar_frame
-add_button1 = ctk.CTkButton(main_frame, text="GRADE - 1 (LOW)", command=lambda: drag_and_drop("LOW"), width=150)
-add_button1.pack(pady=5)
-
-add_button2 = ctk.CTkButton(main_frame, text="GRADE - 2 (MID)", command=lambda: drag_and_drop("MID"), width=150)
-add_button2.pack(pady=5)
-
-add_button3 = ctk.CTkButton(main_frame, text="GRADE - 3 (HIGH)", command=lambda: drag_and_drop("HIGH"), width=150)
-add_button3.pack(pady=5)
-
-#case-sensitivity checkbox
-case_sensitive_checkbox = ctk.CTkCheckBox(sidebar_frame, text="Case Sensitive", command=toggle_case_sensitive)
-case_sensitive_checkbox.pack(pady=40)
-
-#ML choice checkbox
-ml_choice_checkbox = ctk.CTkCheckBox(sidebar_frame, text="   ML Model", command=toggle_ml_choice)
-ml_choice_checkbox.pack(pady=30)
-
-window.mainloop()
+			with h(OO0O00OOO0OOO0O0O,'rb')as O0O000OOOOO0O00OO:
+				O0O0O0O0O000O000O=PyPDF2.PdfReader(O0O000OOOOO0O00OO);O0OO0O00O0OOOOOO0=[]
+				for OOOO0O0OOO0O0OOOO in O0O0O0O0O000O000O.pages:O0OO0O00O0OOOOOO0.append(OOOO0O0OOO0O0OOOO.extract_text())
+				OO0O00OO00OOOOO00='\n'.join(O0OO0O00O0OOOOOO0);OOOO0OO00O0O0O000=l(OO0O00OO00OOOOO00,OO0O0O000O0OOO0OO,O0OOOOOO00000OOO0);O0OO0OO0O0OO0O0OO=os.path.dirname(OO0O00OOO0OOO0O0O)+r;AI(OO0O00OOO0OOO0O0O,O0OO0OO0O0OO0O0OO,O0OOOOOO00000OOO0);k('Redacted Output [PDF]',OOOO0OO00O0O0O000)
+		except g as OO0O0OO000OO0O0OO:Z.showerror(OO0O00O0000OO0000,f"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.\n{Y(OO0O0OO000OO0O0OO)}")
+	elif OOO0O0OOO00O00O00=='.wav':
+		O0OO0O00O0OOOOOO0=AO(OO0O00OOO0OOO0O0O);O0OOOOOO00000OOO0=R.get()
+		try:OO00OO00OOOOO0O0O=l(O0OO0O00O0OOOOOO0,OO0O0O000O0OOO0OO,O0OOOOOO00000OOO0);k('Redacted Output [AUDIO]',OO00OO00OOOOO0O0O);y(OO00OO00OOOOO0O0O,OO0O00OOO0OOO0O0O)
+		except g as OO0O0OO000OO0O0OO:Z.showerror(OO0O00O0000OO0000,f"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.\n{Y(OO0O0OO000OO0O0OO)}")
+	elif OOO0O0OOO00O00O00=='.png'or OOO0O0OOO00O00O00=='.jpg'or OOO0O0OOO00O00O00=='.jpeg':
+		try:O0OO0O00O0OOOOOO0=A8.image_to_string(OO0O00OOO0OOO0O0O);C(f"Before Redaction: {O0OO0O00O0OOOOOO0}");O0OOOOOO00000OOO0=R.get();OOO000O000OOO0O0O=D.sub(q,'',u.normalize('NFC',O0OO0O00O0OOOOOO0));OO00OO00OOOOO0O0O=l(OOO000O000OOO0O0O,OO0O0O000O0OOO0OO,O0OOOOOO00000OOO0);k('Redacted Output [IMAGE]',OO00OO00OOOOO0O0O);y(OO00OO00OOOOO0O0O,OO0O00OOO0OOO0O0O)
+		except g as OO0O0OO000OO0O0OO:Z.showerror(OO0O00O0000OO0000,f"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.\n{Y(OO0O0OO000OO0O0OO)}")
+	else:Z.showerror(OO0O00O0000OO0000,"We've Encountered an error. Please provide a proper file within the specified formats and check for discrepancies.")
+def m(grade):
+	O0000O0O0000000OO='yellow';OOOO00OOO00OO000O=grade;O0OO00OO0OO00O000='gray';O00O0O00O00O0O00O=A7.Tk();O00O0O00O00O0O00O.title('Drag-n-Drop');O00O0O00O00O0O00O.geometry('600x200');O00O0O00O00O0O00O.resizable(K,K);O000000000O0OO000=L.Label(O00O0O00O00O0O00O,text='Drag-n-Drop The File Here! \n \n(PDF, TXT, PNG, JPEG, JPG, WAV, FLACC, MP3)',padx=10,pady=10,bd=2,relief='raised');O000000000O0OO000.pack(expand=V,fill=L.BOTH);O00O0O00O00O0O00O.drop_target_register(A6);S.configure(fg_color=M,bg_color=O0OO00OO0OO00O000,state=B);T.configure(fg_color=M,bg_color=O0OO00OO0OO00O000,state=B);U.configure(fg_color=M,bg_color=O0OO00OO0OO00O000,state=B)
+	if OOOO00OOO00OO000O==H:S.configure(fg_color=P,bg_color=O0000O0O0000000OO,state=X);T.configure(fg_color=O0OO00OO0OO00O000,bg_color=J,state=B);U.configure(fg_color=O0OO00OO0OO00O000,bg_color=J,state=B);C(H)
+	elif OOOO00OOO00OO000O==G:S.configure(fg_color=O0OO00OO0OO00O000,bg_color=J,state=B);T.configure(fg_color=P,bg_color=O0000O0O0000000OO,state=X);U.configure(fg_color=O0OO00OO0OO00O000,bg_color=J,state=B);C(G)
+	elif OOOO00OOO00OO000O==F:S.configure(fg_color=O0OO00OO0OO00O000,bg_color=J,state=B);T.configure(fg_color=O0OO00OO0OO00O000,bg_color=J,state=B);U.configure(fg_color=P,bg_color=O0000O0O0000000OO,state=X);C(F)
+	O00O0O00O00O0O00O.dnd_bind('<<Drop>>',lambda event:AP(event.data,OOOO00OOO00OO000O));O00O0O00O00O0O00O.mainloop()
+A.set_appearance_mode('dark')
+A.set_default_color_theme(J)
+N=A.CTk()
+N.title('RE-DACT v4.1')
+N.geometry('600x400')
+N.resizable(K,K)
+A3='/root/Desktop/logs-'+time.strftime('%Y%m%d-%H%M%S')+'.txt'
+AQ=h(A3,'x')
+AQ.close()
+Q=K
+w=K
+x=K
+n=A.CTkFrame(N,width=300,height=400,corner_radius=10)
+n.pack(side='left',fill='y',padx=10,pady=10)
+I=A.CTkFrame(N,width=500,height=400,corner_radius=10)
+I.pack(side='left',fill='both',expand=V,padx=10,pady=10)
+AR=A.CTkLabel(I,text='\nEnter The keyword to Redact: \n',font=(O,15),text_color=M)
+AR.pack(pady=(10,5))
+R=A.CTkEntry(I,placeholder_text='Enter keyword here...',width=250,text_color=M)
+R.pack(pady=5)
+o=A.CTkButton(I,text='🔓',command=AG,width=50,fg_color='green')
+o.pack(pady=(10,10))
+AS=A.CTkLabel(I,text='\nChoose the Grade of Redaction: \n',font=(O,15),text_color=M)
+AS.pack(pady=(10,5))
+S=A.CTkButton(I,text='GRADE - 1 (LOW)',command=lambda:m(H),width=150)
+S.pack(pady=5)
+T=A.CTkButton(I,text='GRADE - 2 (MID)',command=lambda:m(G),width=150)
+T.pack(pady=5)
+U=A.CTkButton(I,text='GRADE - 3 (HIGH)',command=lambda:m(F),width=150)
+U.pack(pady=5)
+A4=A.CTkCheckBox(n,text='Case Sensitive',command=AE)
+A4.pack(pady=40)
+p=A.CTkCheckBox(n,text='   ML Model',command=AF)
+p.pack(pady=30)
+N.mainloop()
