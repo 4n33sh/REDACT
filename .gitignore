@@ -1,1 +1,2 @@
-main.py
+#ignore festering of logs in git repo.
+logs-*?*.txt
