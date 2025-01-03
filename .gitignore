@@ -1,2 +1,23 @@
 #ignore festering of logs in git repo.
 logs-*?*.txt
+
+#ignore windows sys./env files
+Thumbs.db
+Desktop.ini
+.env
+
+#ignore mac-os/linux sys. files
+.DS_Store
+.env
+
+#ignore vim swaps/backups
+*.swp
+*.swo
+*.bak
+*~
+
+#ignore tempos/cache/configs
+/tmp/
+/var/tmp/
+.cache/
+.config/
