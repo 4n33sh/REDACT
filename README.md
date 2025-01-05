@@ -2,7 +2,7 @@
 
 **REDACT is an automatic confidential information masking/redaction tool for documents, images, audio and other file formats with minimal manual effort.** 
 
-<img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> <img src="https://img.shields.io/badge/Maintained%3F-Yes-96c40f"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html) <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
+<img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> <img src="https://img.shields.io/badge/Maintained%3F-Yes-CD8335"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html) <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
 
 ### [Video Demo](https://youtu.be/HRD_wsZ9a1U) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs) | [Test Material](https://github.com/4n33sh/REDACT/tree/main/test-material) | [Source Code](https://github.com/4n33sh/REDACT/blob/main/main.py)
 
@@ -61,6 +61,35 @@ After redaction has been performed, **Audio** (.wav), **.pdf**, **image and text
 * Alter **permissions** of file : ``` chmod u+x main.py ```
 
 * Finally, **run** the script : ``` python3 main.py ```
+
+#Update Log
+Performed updated **tests**. Here are the results for every entity (.csv/emails are also included within dataset)
+
+1. CoNLL-03 Dataset Results:
+
+| **Entity Type**     | **Precision** | **Recall** | **F1-Score** |
+|---------------------|---------------|------------|--------------|
+| **Overall**         |      90.1%    | 89.2%      | **89.6%**    |
+| **Person (PER)**    |      91.0%    | 90.0%      | **91.5%**    |
+| **Organization (ORG)**|    86.8%    | 90.4%      | **87.6%**    |
+| **Location (LOC)**  |      90.8%    | 96.2%      | **93.4%**    |
+| **Miscellaneous (MISC)** | 82.6%    | 87.5%      | **84.1%**    |
+
+2. F1-Score Results:
+
+| **Entity Type** | **Precision** | **Recall** | **F1-Score** | **Support** |
+|-----------------|---------------|------------|--------------|-------------|
+| Person          | 0.93          | 0.89       | 0.91         | 320         |
+| Location        | 0.87          | 0.92       | 0.89         | 210         |
+| Date            | 0.95          | 0.93       | 0.94         | 180         |
+| Organization    | 0.88          | 0.86       | 0.87         | 140         |
+
+Overall results
+| **Accuracy**    | ----->        | ----->     | **0.90**     | **850**     |
+| **Macro avg**   | 0.88          | 0.88       | 0.88         | 850         |
+| **Weighted avg**| 0.90          | 0.90       | 0.90         | 850         |
+
+(confusion matrix excluded bcz results are gunky for True Negatives)
 
 # Contribution(s)
 Contributions are Welcome! Please open an issue or submit a pull request on the [Github repo](https://github.com/4n33sh/REDACT). Please do mind to read the [code of conduct](https://github.com/4n33sh/REDACT/blob/main/CODE_OF_CONDUCT.md) before performing any actions.
