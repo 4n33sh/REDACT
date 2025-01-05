@@ -10,41 +10,41 @@
 
 # Technical Approach to Full-fledged application
 
-During initial conception of the tool, some fundamental **constraints** were set before proceeding forward:
+During initial conception, some fundamental **constraints** were set before proceeding forward:
 
 1. The tool must be **secure** and respect the **privacy of the user's files**.
 
-2. **Machine Learning models** must be implemented for **constant and consistent training** and be designed for **easy model modification** to meet the user's **specific needs**.
+2. **Machine Learning model** must be implemented for **constant** and **consistent training** and be designed for **easy modification** to meet the user's **specific needs/requirement**.
 
-3. **Smart redaction** must be included to redact basic **PIIs/PLLs** like Phone No., Names, Geo-locations, etc. through **natural language processors** and **RegEx identifiers**.
+3. **Smart redaction** to redact basic **PIIs/PLLs** like Phone Nos., Names, Geo-locations, Dates, etc. through **Natural Language Processor(s)** and **RegEx identifiers**.
 
-4. The tool must **support all types of file formats** and allow the user to **choose from a variety of output formats**.
+4. The tool must support **all** types of **file formats** and allow the user to **choose from a variety of available output formats**.
 
 ![technical datagram](https://github.com/4n33sh/REDACT/blob/main/Technical%20Approach.png)
 
-The Privacy of user's data is ensured through **multiple secure layers** such as **DMZ** (de-militarized zone) for isolation, **secure authenticators** (2FA and JSON) and finally **encryption** for data (while in-transit and storage) to ensure that the training/user data stays secure.
+The Privacy of user's data is ensured through **multiple security layers** such as **DMZ** (de-militarized zone) for isolation, **secure authenticators** (2FA and JSON for web-based access) and finally **encryption** for data (while in-transit and storage) to ensure that the training/user data stays secure.
 
-**Entity recognition** is achieved through **spaCy's NLP** (with it's large dataset) and the ML Training as well as **TensorFlow's BeRT** model was implemented through **transformers**.
+**Entity recognition** is achieved through **spaCy's NLP** (through it's large dataset) and ML based Training by **BeRT** was implemented through **TensorFlow and HF transformers**.
 
 ![prototype gui final](https://github.com/4n33sh/REDACT/blob/main/Prototype%20GUI%20%26%20Functionality.png)
 
-It's also has an easy to use **standalone offline program** via an **intuitive interface**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
+It's also has an easy to use **standalone offline program** via an **intuitive user interface**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
 
 # Prototype Functionality
 
-Consider **picture** redaction, wherein the **text is embedded onto the doc in the image**. The following process is **one of many** ways redaction is performed:
+Consider **picture/image** redaction, wherein the **text is embedded onto the doc in the image**. The following process is **one of many** ways redaction is performed:
 
 ![picture example](https://github.com/4n33sh/REDACT/blob/main/Image%20Redaction%20Flowchart.png)
 
-The above process (just like any file format) follows one of the **three grades** of redaction available to the user:
+The above process (just like any other file format) follows one of the **three grades** of redaction:
 
-1. GRADE - 1 (LOW): This grade performs **basic black-box/text-replacement** redaction with '[REDACT]'. Here, basic pattern discovery is performed with **techniques** like **RegEx**, **Rule definitions**, **find & replace**, etc.
+1. GRADE - 1 (LOW): Performs basic **black-box redaction/text-replacement** with placeholders like '[REDACT]'. Basic pattern discovery is performed with primitive techniques like **RegEx**, **Rule definitions**, **find & replace**, etc.
 
-2. GRADE - 2 (MID): In this grade, the redactable data is **anonymized/masked** and also follows grade 1 redaction methodology. Here, **ML Trained model** redacts previously **left-out** sensitive data by grade 1.
+2. GRADE - 2 (MID): Redactable data is **anonymized/masked** and also follows grade 1 redaction methodology. The **BeRT Model** redacts previously left-out sensitive data by grade 1.
 
-3. GRADE - 3 (HIGH): It is an combination of **grade 1 + grade 2** but, utilizes **NLP** to identify potentially sensitive PIIs and also works in **compliment with TensorFlow's BeRT**. Here, the data recognized can be replaced with **synthetic data** to **preserve meaning/context whilst hiding sensitive data**.
+3. GRADE - 3 (HIGH): It's an combination of **grade 1 + grade 2** but, utilizes **spaCy NLP Toolkit** to identify potentially sensitive PIIs and also works in **compliment with BeRT**. The recognized data can be replaced with **synthetic data** to **preserve meaning/context** whilst **hiding sensitive data**.
 
-After redaction has been performed, **Audio** (.wav), **.pdf**, **image and text formats** are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and later-on be used as **Training data** for future consistent and better redaction(s).
+After redaction has been performed, **Audio** (.wav), **.pdf**, **image** and **text formats** are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better future consistent redactions.
 
 # Installation and Running
 
