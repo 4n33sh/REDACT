@@ -63,26 +63,26 @@ After redaction has been performed, **Audio** (.wav), **.pdf**, **image and text
 * Finally, **run** the script : ``` python3 main.py ```
 
 # Update Log
-Performed updated **tests**. Here are the results for every entity (.csv/emails are also included within dataset):
+Following results convey raw performance by benchmarking the model (.csv/emails are also included within the dataset):
 
 1. **CoNLL-03** Dataset Results:
 
-| **Entity Type**     | **Precision** | **Recall** | **F1-Score** |
+| Entity Type         | Precision (%) | Recall (%) | F1-Score (%) |
 |---------------------|---------------|------------|--------------|
-| **Overall**         |      90.1%    | 89.2%      | **89.6%**    |
-| **Person (PER)**    |      91.0%    | 90.0%      | **91.5%**    |
-| **Organization (ORG)**|    86.8%    | 90.4%      | **87.6%**    |
-| **Location (LOC)**  |      90.8%    | 96.2%      | **93.4%**    |
-| **Miscellaneous (MISC)** | 82.6%    | 87.5%      | **84.1%**    |
+| Overall             | 90.1          | 89.2       | 89.65        |
+| Person (PER)        | 91.0          | 90.0       | 90.5         |
+| Organization (ORG)  | 86.8          | 90.4       | 88.56        |
+| Location (LOC)      | 90.8          | 96.2       | 93.42        |
+| Miscellaneous (MISC)| 82.6          | 87.5       | 84.98        |
 
 2. **F1-Score** Results:
 
 | **Entity Type** | **Precision** | **Recall** | **F1-Score** | **Support** |
 |-----------------|---------------|------------|--------------|-------------|
-| Person          | 0.93          | 0.89       | 0.91         | 320         |
-| Location        | 0.87          | 0.92       | 0.89         | 210         |
+| Person (PER)    | 0.93          | 0.89       | 0.91         | 320         |
+| Location (GPE/LOC) | 0.87          | 0.92       | 0.89         | 210      |
 | Date            | 0.95          | 0.93       | 0.94         | 180         |
-| Organization    | 0.88          | 0.86       | 0.87         | 140         |
+| Organization (ORG) | 0.88          | 0.86       | 0.87         | 140      |
 | **Accuracy**    | ----->        | ----->     | **0.90**     | **850**     |
 | **Macro avg**   | 0.88          | 0.88       | 0.88         | 850         |
 | **Weighted avg**| 0.90          | 0.90       | 0.90         | 850         |
