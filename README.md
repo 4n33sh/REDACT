@@ -65,7 +65,7 @@ After redaction has been performed, **Audio** (.wav), **.pdf**, **image and text
 # Update Log
 Performed updated **tests**. Here are the results for every entity (.csv/emails are also included within dataset):
 
-1. CoNLL-03 Dataset Results:
+1. **CoNLL-03** Dataset Results:
 
 | **Entity Type**     | **Precision** | **Recall** | **F1-Score** |
 |---------------------|---------------|------------|--------------|
@@ -75,7 +75,7 @@ Performed updated **tests**. Here are the results for every entity (.csv/emails 
 | **Location (LOC)**  |      90.8%    | 96.2%      | **93.4%**    |
 | **Miscellaneous (MISC)** | 82.6%    | 87.5%      | **84.1%**    |
 
-2. F1-Score Results:
+2. **F1-Score** Results:
 
 | **Entity Type** | **Precision** | **Recall** | **F1-Score** | **Support** |
 |-----------------|---------------|------------|--------------|-------------|
