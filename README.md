@@ -83,9 +83,6 @@ Performed updated **tests**. Here are the results for every entity (.csv/emails 
 | Location        | 0.87          | 0.92       | 0.89         | 210         |
 | Date            | 0.95          | 0.93       | 0.94         | 180         |
 | Organization    | 0.88          | 0.86       | 0.87         | 140         |
-
-Overall results
-|-----------------|---------------|------------|--------------|-------------|
 | **Accuracy**    | ----->        | ----->     | **0.90**     | **850**     |
 | **Macro avg**   | 0.88          | 0.88       | 0.88         | 850         |
 | **Weighted avg**| 0.90          | 0.90       | 0.90         | 850         |
