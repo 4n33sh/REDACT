@@ -1,5 +1,4 @@
-<div align="center">
-  
+<p align="center">
 # REDACT 
 # (Rapid Efficient Data Anonymization & Content Transformation)
 
@@ -15,8 +14,7 @@
 <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
 
 ### [Video Demo](https://youtu.be/HRD_wsZ9a1U) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs) | [Test Material](https://github.com/4n33sh/REDACT/tree/main/test-material) | [Source Code](https://github.com/4n33sh/REDACT/blob/main/main.py)
-
-</div>
+</p>
 
 ---
 
