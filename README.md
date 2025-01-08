@@ -1,13 +1,12 @@
 <div align="center">
   
   # REDACT 
+  ## (Rapid Efficient Data Anonymization & Content Transformation)
   <img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> 
   <img src="https://img.shields.io/badge/python_->=%203.1-blue"> 
   <img src="https://img.shields.io/badge/Maintained%3F-Yes-CD8335"> 
   <img src="https://img.shields.io/badge/docs-latest-green.svg">
   <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
-  
-  ## (Rapid Efficient Data Anonymization & Content Transformation)
   
   **REDACT is a smart automatic redaction tool for sensitive data in documents, images, audio, and other file formats with minimal manual effort.** 
   
