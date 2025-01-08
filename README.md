@@ -10,6 +10,8 @@
 <img src="https://img.shields.io/badge/Version-v4.1-yellow">
 <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
 
+---
+
 **REDACT is a smart automatic redaction tool for sensitive data in documents, images, audio, and other file formats with minimal manual effort.**
 
 ### [Video Demo](https://youtu.be/HRD_wsZ9a1U) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs) | [Test Material](https://github.com/4n33sh/REDACT/tree/main/test-material) | [Source Code](https://github.com/4n33sh/REDACT/blob/main/main.py)
