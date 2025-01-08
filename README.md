@@ -11,7 +11,6 @@
   <img src="https://img.shields.io/badge/docs-latest-green.svg">
   <img src="https://img.shields.io/badge/Version-v4.1-yellow">
   <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
-  
   ### [Video Demo](https://youtu.be/HRD_wsZ9a1U) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs) | [Test Material](https://github.com/4n33sh/REDACT/tree/main/test-material) | [Source Code](https://github.com/4n33sh/REDACT/blob/main/main.py)
 
 </div>
