@@ -12,7 +12,7 @@
 
 ---
 
-**REDACT is an smart redaction tool for sensitive data redaction in documents, images, audio, and other file formats with minimal manual effort.**
+**REDACT is an smart redaction tool designed to efficiently redact sensitive data from docs, images, audio and various other file formats for minimizing manual effort.**
 
 ### [Video Demo](https://youtu.be/HRD_wsZ9a1U) | [Examples](https://github.com/4n33sh/REDACT/tree/main/example-outputs) | [Test Material](https://github.com/4n33sh/REDACT/tree/main/test-material) | [Source Code](https://github.com/4n33sh/REDACT/blob/main/main.py)
 
@@ -58,13 +58,13 @@ The above process (just like any other file format) follows one of the **three g
 
 2. **GRADE - 2 (MID)**: Grade 1 + Redactable data is **anonymized/masked**. The **BeRT Model** redacts previously left-out sensitive data by Grade 1.
 
-3. **GRADE - 3 (HIGH)**: Grade 1 + Grade 2 + Utilizes **spaCy NLP Toolkit** to identify potentially sensitive PIIs and also works in **compliment with BeRT**. Recognized data can be replaced with **synthetic data** to **preserve meaning/context** whilst **hiding sensitive data**.
+3. **GRADE - 3 (HIGH)**: Grade 1 + Grade 2 + Utilizes **spaCy NLP Toolkit** to identify potential sensitive PIIs and also works in **compliment with BeRT**. Recognized data is replaced with **synthetic data** to **preserve meaning/context** whilst **hiding sensitive data**.
 
-After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better future consistent redactions.
+After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better & consistent redactions in the future.
 
 ---
 
-# Installation and Running
+# Installation & Running
 
 * (optional) **Create & activate** new python **virtual (.venv) environment** :  ``` python3 -m venv ~/your/preffered/path && source ~/your/preffered/path/bin/activate ```
 
@@ -76,7 +76,7 @@ After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image*
 
 * Install spaCy NLP (large) **dataset** (~540mb) : ``` python3 -m spacy download en_core_web_lg ```
 
-* Alter **permissions** of file : ``` chmod u+x main.py ```
+* Alter **permissions** of **main.py** file : ``` chmod u+x main.py ```
 
 * Finally, **run** the script : ``` python3 main.py ```
 
