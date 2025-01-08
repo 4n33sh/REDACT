@@ -5,7 +5,7 @@
 
 **REDACT is a smart automatic redaction tool for sensitive data in documents, images, audio, and other file formats with minimal manual effort.**
 
---
+___
 
 <img src="https://img.shields.io/badge/License_-GPL%203.0-orange"> 
 <img src="https://img.shields.io/badge/python_->=%203.1-blue"> 
