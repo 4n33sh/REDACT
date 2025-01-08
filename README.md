@@ -18,7 +18,7 @@
 
 ---
 
-## Technical Approach to Full-fledged application
+# Technical Approach to Full-fledged application
 
 During initial conception, some fundamental **constraints** were set before proceeding forward:
 
@@ -42,7 +42,7 @@ Privacy of user's data is ensured through **multiple security layers** such as *
 
 It's also has an easy to use **standalone offline program** via an **intuitive user interface (UI)**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
 
-## Prototype Functionality
+# Prototype Functionality
 
 Consider **picture/image** redaction, wherein the **text is embedded onto the doc in the image**. Following process is **one of many** ways redaction could be performed:
 
@@ -58,7 +58,7 @@ The above process (just like any other file format) follows one of the **three g
 
 After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better future consistent redactions.
 
-## Installation and Running
+# Installation and Running
 
 * (optional) **Create & activate** new python **virtual (.venv) environment** :  ``` python3 -m venv ~/your/preffered/path && source ~/your/preffered/path/bin/activate ```
 
@@ -74,7 +74,7 @@ After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image*
 
 * Finally, **run** the script : ``` python3 main.py ```
 
-## Update Log
+# Update Log
 Following results convey raw performance by **benchmarking** the model (.csv/emails are also included within the dataset):
 
 1. **CoNLL-03** Dataset Results:
@@ -123,8 +123,8 @@ Following results convey raw performance by **benchmarking** the model (.csv/ema
 
 (certain predicted freqs. are capped to multiples of two)
 
-## Contribution
+# Contribution
 Contributions are Welcome! Please open an issue or submit a pull request on the [Github repo](https://github.com/4n33sh/REDACT). Please do mind to read the [code of conduct](https://github.com/4n33sh/REDACT/blob/main/CODE_OF_CONDUCT.md) before performing any actions.
 
-## License
+# License
 This project is licensed under the GPL-3.0 License. See the [LICENSE](https://github.com/4n33sh/REDACT/blob/main/LICENSE) file for more details.
