@@ -6,14 +6,14 @@
 
 | Version | Supported |
 | ------- | --------- |
-| Latest (v4.1) | ✅        |
+| Latest (v4.1) | ✅  |
 
 ## Reporting a Vulnerability
 
 REDACT prioritizes the security and privacy of user data. If you discover a vulnerability, please follow these steps:
 
-1. **Contact Us Privately.**
-   - Send an email to [security@redact.ai](mailto:aneesh.sp222@gmail.com) with:
+1. **Contact Privately.**
+   - Send an email to [aneesh.sp222@gmail.com](mailto:aneesh.sp222@gmail.com) with:
      - A clear description of issue.
      - Steps to reproduce the vulnerability.
      - Any potential impact or exploits.
@@ -28,7 +28,7 @@ REDACT prioritizes the security and privacy of user data. If you discover a vuln
 ## Security Measures in REDACT
 
 - **Privacy-First Design**: User data is secured using DMZ isolation, 2FA, and end-to-end encryption (in-transit and at rest).
-- **Continuous Training**: Sensitive data redacted by the system is securely anonymized and incorporated into our ML models for enhanced accuracy.
+- **Continuous Training**: Sensitive data redacted by the system is securely anonymized and incorporated into training data to ML model for enhanced accuracy.
 - **File Formats Supported**: Secure handling for a variety of file types, including text, images, audio, and PDFs.
 
 ## Disclaimer
