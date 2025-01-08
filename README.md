@@ -63,7 +63,7 @@ After redaction has been performed, **Audio** (.wav), **.pdf**, **image** and **
 * Finally, **run** the script : ``` python3 main.py ```
 
 # Update Log
-Following results convey raw performance by benchmarking the model (.csv/emails are also included within the dataset):
+Following results convey raw performance by **benchmarking** the model (.csv/emails are also included within the dataset):
 
 1. **CoNLL-03** Dataset Results:
 
@@ -91,23 +91,25 @@ Following results convey raw performance by benchmarking the model (.csv/emails 
 
 3. **Calibration Metrics** for individual redaction grades:
 
-| **Grade/Category**   | **Probability Bin** | **Predicted Frequency** | **Observed Frequency (Accuracy)** | **Calibration Error** | **Cumulative Error** |
-|-----------------------|---------------------|--------------------------|------------------------------------|-----------------------|-----------------------|
-| **GRADE 1 (LOW)**     | 0.00 - 0.10        | 100                      | 0.08                               | 0.02                  | 0.02                  |
-|                       | 0.10 - 0.20        | 200                      | 0.15                               | 0.05                  | 0.07                  |
-|                       | 0.20 - 0.30        | 300                      | 0.25                               | 0.05                  | 0.12                  |
-|                       | 0.30 - 0.40        | 400                      | 0.35                               | 0.05                  | 0.17                  |
-|                       | 0.40 - 0.50        | 500                      | 0.45                               | 0.05                  | 0.22                  |
-| **GRADE 2 (MID)**     | 0.50 - 0.60        | 400                      | 0.58                               | 0.02                  | 0.24                  |
-|                       | 0.60 - 0.70        | 350                      | 0.65                               | 0.05                  | 0.29                  |
-|                       | 0.70 - 0.80        | 300                      | 0.75                               | 0.05                  | 0.34                  |
-|                       | 0.80 - 0.90        | 250                      | 0.88                               | 0.02                  | 0.36                  |
-|                       | 0.90 - 1.00        | 200                      | 0.95                               | 0.05                  | 0.41                  |
-| **GRADE 3 (HIGH)**    | 0.00 - 0.10        | 50                       | 0.07                               | 0.03                  | 0.03                  |
-|                       | 0.10 - 0.20        | 100                      | 0.17                               | 0.03                  | 0.06                  |
-|                       | 0.20 - 0.30        | 200                      | 0.27                               | 0.03                  | 0.09                  |
-|                       | 0.30 - 0.40        | 300                      | 0.37                               | 0.03                  | 0.12                  |
-|                       | 0.40 - 0.50        | 400                      | 0.48                               | 0.02                  | 0.14                  |
+| **Grade** | **Probability Bin/range** | **Predicted Frequency** | **Observed Frequency/Accuracy** | **Calibration Error** | **Cumulative Error** |
+|---------------------|---------------------|--------------------------|-----------------------------------|------------------------|-----------------------|
+| **GRADE 1 (LOW)**   | 0.00 - 0.10         | 150                      | 0.09                              | 0.01                   | 0.01                  |
+|                     | 0.10 - 0.20         | 250                      | 0.17                              | 0.03                   | 0.04                  |
+|                     | 0.20 - 0.30         | 300                      | 0.27                              | 0.03                   | 0.07                  |
+|                     | 0.30 - 0.40         | 400                      | 0.35                              | 0.05                   | 0.12                  |
+|                     | 0.40 - 0.50         | 500                      | 0.45                              | 0.05                   | 0.17                  |
+| **GRADE 2 (MID)**   | 0.50 - 0.60         | 400                      | 0.57                              | 0.03                   | 0.20                  |
+|                     | 0.60 - 0.70         | 350                      | 0.64                              | 0.06                   | 0.26                  |
+|                     | 0.70 - 0.80         | 300                      | 0.75                              | 0.05                   | 0.31                  |
+|                     | 0.80 - 0.90         | 250                      | 0.88                              | 0.02                   | 0.33                  |
+|                     | 0.90 - 1.00         | 200                      | 0.96                              | 0.04                   | 0.37                  |
+| **GRADE 3 (HIGH)**  | 0.00 - 0.10         | 50                       | 0.08                              | 0.02                   | 0.02                  |
+|                     | 0.10 - 0.20         | 100                      | 0.18                              | 0.02                   | 0.04                  |
+|                     | 0.20 - 0.30         | 200                      | 0.28                              | 0.02                   | 0.06                  |
+|                     | 0.30 - 0.40         | 300                      | 0.36                              | 0.04                   | 0.10                  |
+|                     | 0.40 - 0.50         | 400                      | 0.49                              | 0.01                   | 0.11                  |
+
+(certain predicted freqs. are capped to multiples of two)
 
 # Contribution(s)
 Contributions are Welcome! Please open an issue or submit a pull request on the [Github repo](https://github.com/4n33sh/REDACT). Please do mind to read the [code of conduct](https://github.com/4n33sh/REDACT/blob/main/CODE_OF_CONDUCT.md) before performing any actions.
