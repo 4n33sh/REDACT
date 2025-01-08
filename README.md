@@ -1,7 +1,7 @@
 <div align="center">
   
-  # REDACT 
-  ## (Rapid Efficient Data Anonymization & Content Transformation)
+  # REDACT  
+  ### Rapid Efficient Data Anonymization & Content Transformation
   <img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> 
   <img src="https://img.shields.io/badge/python_->=%203.1-blue"> 
   <img src="https://img.shields.io/badge/Maintained%3F-Yes-CD8335"> 
@@ -56,7 +56,7 @@ The above process (just like any other file format) follows one of the **three g
 
 After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better future consistent redactions.
 
-# Installation and Running
+## Installation and Running
 
 * (optional) **Create & activate** new python **virtual (.venv) environment** :  ``` python3 -m venv ~/your/preffered/path && source ~/your/preffered/path/bin/activate ```
 
