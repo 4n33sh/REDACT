@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align: center;">
 
 # REDACT 
 ## (Rapid Efficient Data Anonymization & Content Transformation)
