@@ -136,5 +136,8 @@ Following results convey raw performance by **benchmarking** the model (.csv/ema
 # Contribution
 Contributions are Welcome! Please open an issue or submit a pull request on the [Github repo](https://github.com/4n33sh/REDACT). Please do mind to read the [code of conduct](https://github.com/4n33sh/REDACT/blob/main/CODE_OF_CONDUCT.md) before performing any actions.
 
+# Security Policy
+Found an vulnerability? Read the [security file](https://github.com/4n33sh/REDACT/blob/main/SECURITY.md) for reporting instructions.
+
 # License
 This project is licensed under GPL-3.0 License, which allows for free use, modification and distribution of the source code. See the [LICENSE](https://github.com/4n33sh/REDACT/blob/main/LICENSE) file for more details.
