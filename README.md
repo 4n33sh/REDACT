@@ -1,6 +1,6 @@
 # REDACT - Rapid Efficient Data Anonymization & Content Transformation
 
-**REDACT is an automatic confidential information masking/redaction tool for documents, images, audio and other file formats with minimal manual effort.** 
+**REDACT is an smart automatic redaction tool for sensitive data in documents, images, audio and other file formats with minimal manual effort.** 
 
 <img src="https://img.shields.io/badge/Lincense_-GPL%203.0-orange"> <img src="https://img.shields.io/badge/python_->=%203.1-blue"> <img src="https://img.shields.io/badge/Maintained%3F-Yes-CD8335"> [![Documentation Status](https://img.shields.io/:docs-latest-green.svg)](http://opennlp.apache.org/docs/index.html) <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
 
@@ -20,31 +20,33 @@ During initial conception, some fundamental **constraints** were set before proc
 
 4. The tool must support **all** types of **file formats** and allow the user to **choose from a variety of available output formats**.
 
+Based on above constraints, the following technical approach was devised.
+
 ![technical datagram](https://github.com/4n33sh/REDACT/blob/main/Technical%20Approach.png)
 
-The Privacy of user's data is ensured through **multiple security layers** such as **DMZ** (de-militarized zone) for isolation, **secure authenticators** (2FA and JSON for web-based access) and finally **encryption** for data (while in-transit and storage) to ensure that the training/user data stays secure.
+Privacy of user's data is ensured through **multiple security layers** such as **DMZ** (de-militarized zone) for isolation, **secure authenticators** (2FA and JSON for web-based access) and finally **encryption** for data (while in-transit and storage) to ensure that the training/user data stays secure.
 
 **Entity recognition** is achieved through **spaCy's NLP** (through it's large dataset) and ML based Training by **BeRT** was implemented through **TensorFlow and HF transformers**.
 
 ![prototype gui final](https://github.com/4n33sh/REDACT/blob/main/Prototype%20GUI%20%26%20Functionality.png)
 
-It's also has an easy to use **standalone offline program** via an **intuitive user interface**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
+It's also has an easy to use **standalone offline program** via an **intuitive user interface (UI)**, hence saving time and effort (to operator) compared to manual redaction process/clunky interface.
 
 # Prototype Functionality
 
-Consider **picture/image** redaction, wherein the **text is embedded onto the doc in the image**. The following process is **one of many** ways redaction is performed:
+Consider **picture/image** redaction, wherein the **text is embedded onto the doc in the image**. Following process is **one of many** ways redaction could be performed:
 
 ![picture example](https://github.com/4n33sh/REDACT/blob/main/Image%20Redaction%20Flowchart.png)
 
 The above process (just like any other file format) follows one of the **three grades** of redaction:
 
-1. GRADE - 1 (LOW): Performs basic **black-box redaction/text-replacement** with placeholders like '[REDACT]'. Basic pattern discovery is performed with primitive techniques like **RegEx**, **Rule definitions**, **find & replace**, etc.
+1. **GRADE - 1 (LOW)**: Performs basic **black-box redaction/text-replacement** with placeholders like '[REDACT]' & Pattern discovery through primitive techniques like **RegEx**, **Rule definitions**, **find & replace**, etc.
 
-2. GRADE - 2 (MID): Redactable data is **anonymized/masked** and also follows grade 1 redaction methodology. The **BeRT Model** redacts previously left-out sensitive data by grade 1.
+2. **GRADE - 2 (MID)**: Grade 1 + Redactable data is **anonymized/masked**. The **BeRT Model** redacts previously left-out sensitive data by Grade 1.
 
-3. GRADE - 3 (HIGH): It's an combination of **grade 1 + grade 2** but, utilizes **spaCy NLP Toolkit** to identify potentially sensitive PIIs and also works in **compliment with BeRT**. The recognized data can be replaced with **synthetic data** to **preserve meaning/context** whilst **hiding sensitive data**.
+3. **GRADE - 3 (HIGH)**: Grade 1 + Grade 2 + Utilizes **spaCy NLP Toolkit** to identify potentially sensitive PIIs and also works in **compliment with BeRT**. Recognized data can be replaced with **synthetic data** to **preserve meaning/context** whilst **hiding sensitive data**.
 
-After redaction has been performed, **Audio** (.wav), **.pdf**, **image** and **text formats** are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better future consistent redactions.
+After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better future consistent redactions.
 
 # Installation and Running
 
