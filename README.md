@@ -1,7 +1,6 @@
 <div align="center">
   
-# REDACT 
-## (Rapid Efficient Data Anonymization & Content Transformation)
+## REDACT (Rapid Efficient Data Anonymization & Content Transformation)
 
 <img src="https://img.shields.io/badge/License_-GPL%203.0-orange"> 
 <img src="https://img.shields.io/badge/python_->=%203.1-blue"> 
