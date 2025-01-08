@@ -1,5 +1,6 @@
 <div align="center">
-# REDACT ## (Rapid Efficient Data Anonymization & Content Transformation)
+  
+#REDACT ## (Rapid Efficient Data Anonymization & Content Transformation)
 
 **REDACT is a smart automatic redaction tool for sensitive data in documents, images, audio, and other file formats with minimal manual effort.**
 
