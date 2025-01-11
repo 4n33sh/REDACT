@@ -52,6 +52,8 @@ Consider **picture/image** redaction, wherein the **text is embedded onto the do
 
 ![picture example](https://github.com/4n33sh/REDACT/blob/main/Image%20Redaction%20Flowchart.png)
 
+It utilizes an data extractor (OmniConvert) to convert any file's data into text format for easy digestion for REDACT engine through techniques such as OCR (optical character recognition), audio synthesis and document convertors.
+
 The above process (just like any other file format) follows one of the **three grades** of redaction:
 
 1. **GRADE - 1 (LOW)**: Performs basic **black-box redaction/text-replacement** with placeholders like '[REDACT]' & Pattern discovery through primitive techniques like **RegEx**, **Rule definitions**, **find & replace**, etc.
@@ -60,7 +62,7 @@ The above process (just like any other file format) follows one of the **three g
 
 3. **GRADE - 3 (HIGH)**: Grade 1 + Grade 2 + Utilizes **spaCy NLP Toolkit** to identify potential sensitive PIIs and also works in **compliment with BeRT**. Recognized data is replaced with **synthetic data** to **preserve meaning/context** whilst **hiding sensitive data**.
 
-After redaction has been performed, **audio** (.wav, .flacc), **.pdf**, **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better & consistent redactions in the future.
+After redaction has been performed, **audio** (.wav, .flacc), **document** (.pdf, .docx, .csv), **image** (.jpg, .png, .jpeg, .bmp) and **text** formats are made available for the user to save/download from. The previously redacted data will securely be added onto the ML dataset and be used later on as **Training data** for better & consistent redactions in the future.
 
 ---
 
