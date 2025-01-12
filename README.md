@@ -133,6 +133,8 @@ Following results convey raw performance by **benchmarking** the model (.csv/ema
 
 (certain predicted freqs. are capped to multiples of two)
 
+**Overall Model Results** (as of jan-2025) : **CoNLL-03: 89.93%**, **F1-Score: 0.90** & **Weighted Avg. of Calibration Metrics: 3.665%**. 
+
 ---
 
 # Contribution
