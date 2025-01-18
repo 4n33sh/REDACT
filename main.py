@@ -32,13 +32,11 @@ from transformers import BertTokenizer, TFBertForTokenClassification
 import unicodedata
 
 #load spaCy model (large) for NLP/NER
-
 nlp = spacy.load("en_core_web_lg")	
 fake = Faker()
 
 #load BeRT Tokenizer and model for ML-based entity recog.
 #this will require internet connection (1st time only - later stored in local cache)
-
 tokenizer = BertTokenizer.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
 bert_model = TFBertForTokenClassification.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
 
@@ -67,11 +65,11 @@ def toggle_lock():
 	
 	entry1.configure(state='disabled' if locked else 'normal')
 
-	#change the 'lock' button text, emoji and color
+	#change the 'lock' button text, emoji and colour
 	if locked:
 		lock_button.configure(text="\U0001f512", fg_color="red", text_color="black")  #red background when locked
 	else:
-		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background means unlocked
+		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background when unlocked
 
 class PDF(FPDF):
 
@@ -95,28 +93,28 @@ def show_scroll_messagebox(title, message):
 	messagebox = tkin.Toplevel()
 	messagebox.title(title)
 
-	#create a Scrolled-Text widget
+	#create a scrolled-Text widget
 	text_area = scrolledtext.ScrolledText(messagebox, wrap=tkin.WORD, width=50, height=10)
 	text_area.insert(tkin.END, message)
-	text_area.config(state=tkin.DISABLED)  #read-only configuration
+	text_area.config(state=tkin.DISABLED)  #read-only config.
 	text_area.pack(padx=10, pady=10)
 
-	#added an 'OK' button to close the dialog
+	#added an 'OK' button to close the dialog/window
 	ok_button = tkin.Button(messagebox, text="OK", command=messagebox.destroy)
 	ok_button.pack(pady=(0, 10))
 
-	messagebox.transient()  #make it modal
-	messagebox.grab_set() #prevent interaction with other windows when displayed
+	messagebox.transient()  #make it modal (set: transient)
+	messagebox.grab_set() #prevent interaction with other windows when displayed/window-overlayed
 
 def text_to_speech(text, output_path):
 
-	#initialize the text-to-speech engine
+	#initialize text-to-speech engine
 	engine = pyttsx3.init()
 	voices = engine.getProperty('voices')
 
-	#Set properties (voice, rate, volume)
+	#set synthesizer properties (voice, rate, volume)
 	engine.setProperty('rate', 18)  #speed of speech (18wpm instead of 120-135wpm bcz it then becomes incomprehensible)
-	engine.setProperty('volume', 1.0)  #vol (0.0 to 1.0) range
+	engine.setProperty('volume', 1.0)  #vol @ (0.0 to 1.0) range
 	
 	engine.setProperty('voice', voices[1].id)  #change da index to select different voices
 	
@@ -126,7 +124,7 @@ def text_to_speech(text, output_path):
 			print(status)
 		sd.play(indata, samplerate=44100)
 
-	#Generate audio fyle
+	#generate audio fyle
 	engine.save_to_file(text, "/tmp/text-to-speech-output.wav")
 	engine.runAndWait()
 
@@ -171,10 +169,10 @@ def redact_with_regex(page_text, pattern, page):
 	matches = re.finditer(pattern, page_text)
 	for match in matches:
 		text = match.group(0)  #get the matched text
-		text_instances = page.search_for(text)  #search for text in the page
+		text_instances = page.search_for(text)  #search for text in current page iteration (must work on intergating with black-box engine)
 		for inst in text_instances:
-			rect = fitz.Rect(inst)  #bound rectangle of the matched text
-			page.add_redact_annot(rect, fill=(0, 0, 0))  #add a black box over the matched text
+			rect = fitz.Rect(inst)  #calc. bound rectangle of the matched text for accurate bounding
+			page.add_redact_annot(rect, fill=(0, 0, 0))  #add black box over the matched text
 
 #main function to redact keywords and sensitive information in the PDF
 def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
@@ -255,6 +253,7 @@ def redact_credit_card(match,redaction_level):
 	if redaction_level == "LOW":
 		return "[REDACTED CREDIT CARD]"
 	elif redaction_level == "MID":
+		#mask credit card with 'XXXX-XXXX-XXXX' (as-per luhn's algo.)
 		return 'XXXX-XXXX-XXXX-' + cc[-4:]
 	elif redaction_level == "HIGH":
 		return fake.credit_card_number()
@@ -264,6 +263,7 @@ def redact_ssn(match,redaction_level):
 	if redaction_level == "LOW":
 		return "[REDACTED SSN]"
 	elif redaction_level == "MID":
+		#mask ssn 'XXX-XX'
 		return 'XXX-XX-' + ssn[-4:]
 	elif redaction_level == "HIGH":
 		return fake.ssn()
@@ -273,10 +273,12 @@ def redact_aadhar(match,redaction_level):
 	if redaction_level == "LOW":
 		return "[REDACTED AADHAR]"
 	elif redaction_level == "MID":
+		#mask aadhaar with 'XXXX-XXXX-' and then leave the rest of digits as open val.
 		return 'XXXX-XXXX-' + aadhar[-4:]
 	elif redaction_level == "HIGH":
-		return fake.ssn()  #aaadhar is 12-digit number, but fake.ssn() works for gen. format
-		
+		return fake.ssn()  #aaadhar is 12-digit number, but fake.ssn() can moonlight for gen. format regex discovery 
+
+#update (2) (major revamp):
 #implemented nlp/ml into single pass
 #utilized re.sub and re.cache for faster replacement and dict. caching
 #implemented helpr function for synthetic_data gen. and rep.
@@ -291,7 +293,7 @@ def redact_text(text, redaction_level, keyword=None):
 	doc = nlp(text)
 	redacted_text = text
 	
-	#apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
+	#apply regex-based redactions for phone numbers, credit cards, SSNs, and aaadhar numbers
 	text = re.sub(phone_pattern, lambda match: redact_phone(match, redaction_level), text)
 	text = re.sub(credit_card_pattern, lambda match: redact_credit_card(match, redaction_level), text)
 	text = re.sub(ssn_pattern, lambda match: redact_ssn(match, redaction_level), text)
@@ -300,10 +302,10 @@ def redact_text(text, redaction_level, keyword=None):
 	#obtain BeRT entities
 	bert_entities = get_bert_entities(text)
 
-	#Combine BeRT and spaCy entities into one list 4 a single pass
+	#combine BeRT and spaCy entities into one list 4 a single pass
 	entities_to_redact = []
 
-	#Add BeRT entities (PER, ORG, LOC, MISC)
+	#add BeRT entities (PER, ORG, LOC, MISC)
 	if ml_choice_checkbox.get() == 1:
 		print("ML Choice: Selected")
 		for entity, label in bert_entities:
@@ -317,7 +319,7 @@ def redact_text(text, redaction_level, keyword=None):
 		if ent.label_ in ["PERSON", "ORG", "GPE", "DATE"]:
 			entities_to_redact.append((ent.text, ent.label_))
 
-	#pre-compute synthetic data 4 high redaction level (to prevent redundant generation)
+	#pre-compute synthetic data 4 high redaction level (to prevent redundant and un-necessary generation)
 	synthetic_data = {}
 
 	def get_synthetic_data(label):
@@ -503,6 +505,7 @@ def drag_and_drop(grade):
 	root.dnd_bind('<<Drop>>', lambda event:drop_and_identify(event.data,grade))
 	root.mainloop()
 
+#previous UI built in tkinter. changed to customtkinter (be wary of tkinter-customtkinter cross-utilization)
 #set custom color theme
 ctk.set_appearance_mode("dark")  #change to 'Light' or 'Dark' if needed
 ctk.set_default_color_theme("blue")  #dev can choose a different theme
