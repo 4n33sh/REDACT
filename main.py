@@ -3,8 +3,7 @@
 #above microprocessor executes code directly form python .venv package. modify to suit your venv. path
 #for linux terminal implementation/execution: source /location/to/venv/bin/activate
 
-#before running the script, install dependencies from requirements.txt:
-#pip install -r requirements.txt
+#before running the script, install dependencies from requirements.txt: pip install -r requirements.txt
 
 import os
 import re
