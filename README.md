@@ -1,6 +1,6 @@
 <div align="center">
 
-![REDACT LOGO](https://github.com/user-attachments/assets/a99e81bd-1fdc-46b3-b735-e6e80234090c)
+![REDACT LOGO](https://github.com/user-attachments/assets/1f3bc67b-b43d-4cf6-9a15-40a7478849b9)
 # REDACT 📝 
 ## (Rapid Efficient Data Anonymization & Content Transformation)
 
