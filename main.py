@@ -31,7 +31,7 @@ import tensorflow as tf
 from transformers import BertTokenizer, TFBertForTokenClassification
 import unicodedata
 
-#load spaCy model (large) for NLP/NER
+#load spaCy model (large) for NLP/NER and faker
 nlp = spacy.load("en_core_web_lg")	
 fake = Faker()
 
@@ -75,14 +75,14 @@ class PDF(FPDF):
 
 	#generate the header of PDF file
 	def header(self):
-		# Add a title to the PDF
+		#add a title to the PDF
 		self.set_font('Arial', 'B', 12)
 		self.cell(0, 10, 'My PDF Title', 0, 1, 'C')
 		self.ln(10)
 	
 	#generate footer of PDF file
 	def footer(self):
-		# Add page number
+		#add page num.
 		self.set_y(-15)
 		self.set_font('Arial', 'I', 8)
 		self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
