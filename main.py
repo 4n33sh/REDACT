@@ -52,7 +52,7 @@ def toggle_case_sensitive():
 	global case_sensitive
 	case_sensitive = case_sensitive_checkbox.get()
 
-#function to handle the ML choice checkbox toggle
+#function to handle the ML-choice checkbox toggle
 def toggle_ml_choice():
 	global use_ml
 	use_ml = ml_choice_checkbox.get()
@@ -221,6 +221,8 @@ def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
 	pdf_document.close()
 	
 def get_bert_entities(text):
+
+	#tokenize and pre-fetch logits
 	"""Function to extract entities using BERT."""
 	inputs = tokenizer(text, return_tensors="tf", truncation=True, padding=True)
 	outputs = bert_model(**inputs)
@@ -322,6 +324,7 @@ def redact_text(text, redaction_level, keyword=None):
 	#pre-compute synthetic data 4 high redaction level (to prevent redundant and un-necessary generation)
 	synthetic_data = {}
 
+	#check for every entity before synthetic replacement
 	def get_synthetic_data(label):
 		"""Generate synthetic data for a specific entity label, caching results."""
 		if label not in synthetic_data:
@@ -379,27 +382,33 @@ def redact_text(text, redaction_level, keyword=None):
 
 def preprocess_and_recognize_audio(audio_file):
 
+	#set some ground-work for pre-processing audio (channel set to mono/1 and default rate of 16khz)
 	audio = AudioSegment.from_file(audio_file).set_channels(1).set_frame_rate(16000)
 	processed_file = "/tmp/output-processed-audio.wav"
 	audio.export(processed_file, format="wav")
-	
+
 	recognizer = sr.Recognizer()
-	
+
+	#process/de-synthesis and covert audio to text and pass-onto called function/file loc.
 	with sr.AudioFile(processed_file) as source:
 		audio_data = recognizer.record(source)
 	try:
 		text = recognizer.recognize_sphinx(audio_data)
 		print("Processed Audio Speech:", text)
 		return text
+		
+	#check runs. for un-recognizable/error-prone audio file
 	except sr.UnknownValueError:
 		print("Sorry, the audio could not be deciphered. Please provide a clear .wav/.flacc audio file.")
 	except sr.RequestError as e:
 		print(f"Could not perform conversion: {e}")
-	
+
+	#after tmp. proc. remove file (must revamp code to utilize caching instead of hard-saving tempo. data)
 	os.remove(processed_file)
 
 def drop_and_identify(file_path,grade):
 
+	#from d-n-d input remove the extension and find out pwd (parent working direct.)
 	_, extension = os.path.splitext(file_path)
 
 	if extension == ".pdf":
