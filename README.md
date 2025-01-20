@@ -1,6 +1,6 @@
 <div align="center">
 
-![REDACT LOGO trsp](https://github.com/user-attachments/assets/348b80fa-fc79-40a8-83e1-9fdb0aeece6c)
+![REDACT LOGO trsp](https://github.com/user-attachments/assets/96c6ff01-346b-4813-8bfa-d31b16cf74ae)
 # REDACT 📝 
 ## (Rapid Efficient Data Anonymization & Content Transformation)
 
