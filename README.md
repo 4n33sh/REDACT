@@ -86,7 +86,8 @@ After redaction has been performed, **audio** (.wav, .flacc), **document** (.pdf
 ---
 
 # Update Log
-Following results convey raw performance by **benchmarking** the model (.csv/emails are also included within the dataset):
+
+- **[27-12-2024]** : Following results convey raw performance by **benchmarking** the model (.csv + .eml are also included within dataset):
 
 1. **CoNLL-03** Dataset Results:
 
@@ -134,7 +135,11 @@ Following results convey raw performance by **benchmarking** the model (.csv/ema
 
 (certain predicted freqs. are capped to multiples of two)
 
-**Overall Model Results** (as of jan-2025) : **CoNLL-03: 89.93%**, **F1-Score: 0.90** & **Weighted Avg. of Calibration Metrics: 3.665%**. 
+**Overall Model Results** : **CoNLL-03: 89.93%**, **F1-Score: 0.90** & **Weighted Avg. of Calibration Metrics: 3.665%**.
+ 
+- **[12-01-2025]** : Multilingual support added with mBeRT. Now enables tokenization in ~100 languages (previously data was recognized and translated to english before processing. Translation methodology excluded bcz loss of context occoured)
+
+- **[19-01-2025]** : Stress-testing model(s) with CUDA for faster model inference and offloading CPU work. Multiprocessing undergoing tests and monitoring with perf & strace.
 
 ---
 
