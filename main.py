@@ -51,11 +51,13 @@ bert_model = TFBertForTokenClassification.from_pretrained("dbmdz/bert-large-case
 def toggle_case_sensitive():
 	global case_sensitive
 	case_sensitive = case_sensitive_checkbox.get()
+	print("Case-Sensitive CheckBox status:", case_sensitive)
 
 #function to handle the ML-choice checkbox toggle
 def toggle_ml_choice():
 	global use_ml
 	use_ml = ml_choice_checkbox.get()
+	print("ML CheckBox status:", use_ml)
 
 def toggle_lock():
 
@@ -481,7 +483,7 @@ def drag_and_drop(grade):
 	root = TkinterDnD.Tk()
 	
 	root.title("Drag-n-Drop")
-	root.geometry("400x200")
+	root.geometry("500x200")
 	root.resizable(False, False)
 	
 	label = tkin.Label(root, text="Drag-n-Drop The File Here! \n \n(PDF, TXT, PNG, JPEG, JPG, WAV, FLACC, MP3)", padx=10, pady=10, bd = 2, relief="raised")
