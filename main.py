@@ -31,7 +31,7 @@ import tensorflow as tf
 from transformers import BertTokenizer, TFBertForTokenClassification
 import unicodedata
 
-#load spaCy model (large) for NLP/NER
+#load spaCy model (large) for NLP/NER and faker
 
 nlp = spacy.load("en_core_web_lg")	
 fake = Faker()
@@ -55,7 +55,7 @@ def toggle_case_sensitive():
 	case_sensitive = case_sensitive_checkbox.get()
 	print("Case-Sensitive CheckBox status:", case_sensitive)
 
-#function to handle the ML choice checkbox toggle
+#function to handle the ML-choice checkbox toggle
 def toggle_ml_choice():
 	global use_ml
 	use_ml = ml_choice_checkbox.get()
@@ -69,24 +69,68 @@ def toggle_lock():
 	
 	entry1.configure(state='disabled' if locked else 'normal')
 
-	#change the 'lock' button text, emoji and color
+	#change the 'lock' button text, emoji and colour
 	if locked:
 		lock_button.configure(text="\U0001f512", fg_color="red", text_color="black")  #red background when locked
 	else:
 		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background means unlocked
+		
+def redact_phone(match,redaction_level):
+	
+	phone = match.group(0)
+	if redaction_level == "LOW":
+		return "[REDACTED PHONE]"
+	elif redaction_level == "MID":
+		#mask phone number with 'XXX-XXX-XXXX'
+		return 'XXX-XXX-' + phone[-4:]
+	elif redaction_level == "HIGH":
+		return fake.phone_number()
+		
+def redact_credit_card(match,redaction_level):
+	
+	cc = match.group(0)
+	if redaction_level == "LOW":
+		return "[REDACTED CREDIT CARD]"
+	elif redaction_level == "MID":
+		#mask credit card with 'XXXX-XXXX-XXXX' (as-per luhn's algo.)
+		return 'XXXX-XXXX-XXXX-' + cc[-4:]
+	elif redaction_level == "HIGH":
+		return fake.credit_card_number()
+		
+def redact_ssn(match,redaction_level):
+	
+	ssn = match.group(0)
+	if redaction_level == "LOW":
+		return "[REDACTED SSN]"
+	elif redaction_level == "MID":
+		#mask ssn 'XXX-XX'
+		return 'XXX-XX-' + ssn[-4:]
+	elif redaction_level == "HIGH":
+		return fake.ssn()
+		
+def redact_aadhar(match,redaction_level):
+	
+	aadhar = match.group(0)
+	if redaction_level == "LOW":
+		return "[REDACTED AADHAR]"
+	elif redaction_level == "MID":
+		#mask aadhaar with 'XXXX-XXXX-' and then leave the rest of digits as open val.
+		return 'XXXX-XXXX-' + aadhar[-4:]
+	elif redaction_level == "HIGH":
+		return fake.ssn()  #aaadhar is 12-digit number, but fake.ssn() can moonlight for gen. format regex discovery
 
 class PDF(FPDF):
 
 	#generate the header of PDF file
 	def header(self):
-		# Add a title to the PDF
+		#add PDF title
 		self.set_font('Arial', 'B', 12)
 		self.cell(0, 10, 'My PDF Title', 0, 1, 'C')
 		self.ln(10)
 	
 	#generate footer of PDF file
 	def footer(self):
-		# Add page number
+		#add page num.
 		self.set_y(-15)
 		self.set_font('Arial', 'I', 8)
 		self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
@@ -97,28 +141,28 @@ def show_scroll_messagebox(title, message):
 	messagebox = tkin.Toplevel()
 	messagebox.title(title)
 
-	#create a Scrolled-Text widget
+	#create a scrolled-Text widget
 	text_area = scrolledtext.ScrolledText(messagebox, wrap=tkin.WORD, width=50, height=10)
 	text_area.insert(tkin.END, message)
-	text_area.config(state=tkin.DISABLED)  #read-only configuration
+	text_area.config(state=tkin.DISABLED)  #read-only config.
 	text_area.pack(padx=10, pady=10)
 
 	#added an 'OK' button to close the dialog
 	ok_button = tkin.Button(messagebox, text="OK", command=messagebox.destroy)
 	ok_button.pack(pady=(0, 10))
 
-	messagebox.transient()  #make it modal
-	messagebox.grab_set() #prevent interaction with other windows when displayed
+	messagebox.transient()  #make it modal (set to: transient)
+	messagebox.grab_set() #prevent interaction with other windows when displayed/window-overlay
 
 def text_to_speech(text, output_path):
 
-	#initialize the text-to-speech engine
+	#initialize text-to-speech engine
 	engine = pyttsx3.init()
 	voices = engine.getProperty('voices')
 
-	#Set properties (voice, rate, volume)
+	#set synthesizer properties(voice, rate, volume)
 	engine.setProperty('rate', 18)  #speed of speech (18wpm instead of 120-135wpm bcz it then becomes incomprehensible)
-	engine.setProperty('volume', 1.0)  #vol (0.0 to 1.0) range
+	engine.setProperty('volume', 1.0)  #vol @(0.0 to 1.0) range
 	
 	engine.setProperty('voice', voices[1].id)  #change da index to select different voices
 	
@@ -128,7 +172,7 @@ def text_to_speech(text, output_path):
 			print(status)
 		sd.play(indata, samplerate=44100)
 
-	#Generate audio fyle
+	#generate tempo audio file
 	engine.save_to_file(text, "/tmp/text-to-speech-output.wav")
 	engine.runAndWait()
 
@@ -173,9 +217,9 @@ def redact_with_regex(page_text, pattern, page):
 	matches = re.finditer(pattern, page_text)
 	for match in matches:
 		text = match.group(0)  #get the matched text
-		text_instances = page.search_for(text)  #search for text in the page
+		text_instances = page.search_for(text)  #search for text in current page iteration (must work on intergating with black-box engine)
 		for inst in text_instances:
-			rect = fitz.Rect(inst)  #bound rectangle of the matched text
+			rect = fitz.Rect(inst) #calc. bound rectangle of the matched text for accurate bounding
 			page.add_redact_annot(rect, fill=(0, 0, 0))  #add a black box over the matched text
 
 #main function to redact keywords and sensitive information in the PDF
@@ -225,7 +269,8 @@ def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
 	pdf_document.close()
 	
 def get_bert_entities(text):
-	"""Function to extract entities using BERT."""
+
+	#tokenize and also pre-fetch logits as-well as train
 	#tokenize the input text
 	inputs = tokenizer(text, return_tensors="tf", truncation=True, padding=True)
 	
