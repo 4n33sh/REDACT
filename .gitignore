@@ -1,3 +1,9 @@
+#ignore spacy tmp. model
+redact.spacy
+
+#ignore temp. model dir
+/redact_model
+
 #ignore festering of logs in git repo.
 logs-*?*.txt
 
