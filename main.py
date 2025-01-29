@@ -31,12 +31,14 @@ import tensorflow as tf
 from transformers import BertTokenizer, TFBertForTokenClassification
 import unicodedata
 
-#load spaCy model (large) for NLP/NER and faker
+#load spaCy model (large) for NLP/NER
+
 nlp = spacy.load("en_core_web_lg")	
 fake = Faker()
 
 #load BeRT Tokenizer and model for ML-based entity recog.
 #this will require internet connection (1st time only - later stored in local cache)
+
 tokenizer = BertTokenizer.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
 bert_model = TFBertForTokenClassification.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
 
@@ -53,7 +55,7 @@ def toggle_case_sensitive():
 	case_sensitive = case_sensitive_checkbox.get()
 	print("Case-Sensitive CheckBox status:", case_sensitive)
 
-#function to handle the ML-choice checkbox toggle
+#function to handle the ML choice checkbox toggle
 def toggle_ml_choice():
 	global use_ml
 	use_ml = ml_choice_checkbox.get()
@@ -67,24 +69,24 @@ def toggle_lock():
 	
 	entry1.configure(state='disabled' if locked else 'normal')
 
-	#change the 'lock' button text, emoji and colour
+	#change the 'lock' button text, emoji and color
 	if locked:
 		lock_button.configure(text="\U0001f512", fg_color="red", text_color="black")  #red background when locked
 	else:
-		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background when unlocked
+		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background means unlocked
 
 class PDF(FPDF):
 
 	#generate the header of PDF file
 	def header(self):
-		#add a title to the PDF
+		# Add a title to the PDF
 		self.set_font('Arial', 'B', 12)
 		self.cell(0, 10, 'My PDF Title', 0, 1, 'C')
 		self.ln(10)
 	
 	#generate footer of PDF file
 	def footer(self):
-		#add page num.
+		# Add page number
 		self.set_y(-15)
 		self.set_font('Arial', 'I', 8)
 		self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
@@ -95,28 +97,28 @@ def show_scroll_messagebox(title, message):
 	messagebox = tkin.Toplevel()
 	messagebox.title(title)
 
-	#create a scrolled-Text widget
+	#create a Scrolled-Text widget
 	text_area = scrolledtext.ScrolledText(messagebox, wrap=tkin.WORD, width=50, height=10)
 	text_area.insert(tkin.END, message)
-	text_area.config(state=tkin.DISABLED)  #read-only config.
+	text_area.config(state=tkin.DISABLED)  #read-only configuration
 	text_area.pack(padx=10, pady=10)
 
-	#added an 'OK' button to close the dialog/window
+	#added an 'OK' button to close the dialog
 	ok_button = tkin.Button(messagebox, text="OK", command=messagebox.destroy)
 	ok_button.pack(pady=(0, 10))
 
-	messagebox.transient()  #make it modal (set: transient)
-	messagebox.grab_set() #prevent interaction with other windows when displayed/window-overlayed
+	messagebox.transient()  #make it modal
+	messagebox.grab_set() #prevent interaction with other windows when displayed
 
 def text_to_speech(text, output_path):
 
-	#initialize text-to-speech engine
+	#initialize the text-to-speech engine
 	engine = pyttsx3.init()
 	voices = engine.getProperty('voices')
 
-	#set synthesizer properties (voice, rate, volume)
+	#Set properties (voice, rate, volume)
 	engine.setProperty('rate', 18)  #speed of speech (18wpm instead of 120-135wpm bcz it then becomes incomprehensible)
-	engine.setProperty('volume', 1.0)  #vol @ (0.0 to 1.0) range
+	engine.setProperty('volume', 1.0)  #vol (0.0 to 1.0) range
 	
 	engine.setProperty('voice', voices[1].id)  #change da index to select different voices
 	
@@ -126,7 +128,7 @@ def text_to_speech(text, output_path):
 			print(status)
 		sd.play(indata, samplerate=44100)
 
-	#generate audio fyle
+	#Generate audio fyle
 	engine.save_to_file(text, "/tmp/text-to-speech-output.wav")
 	engine.runAndWait()
 
@@ -171,10 +173,10 @@ def redact_with_regex(page_text, pattern, page):
 	matches = re.finditer(pattern, page_text)
 	for match in matches:
 		text = match.group(0)  #get the matched text
-		text_instances = page.search_for(text)  #search for text in current page iteration (must work on intergating with black-box engine)
+		text_instances = page.search_for(text)  #search for text in the page
 		for inst in text_instances:
-			rect = fitz.Rect(inst)  #calc. bound rectangle of the matched text for accurate bounding
-			page.add_redact_annot(rect, fill=(0, 0, 0))  #add black box over the matched text
+			rect = fitz.Rect(inst)  #bound rectangle of the matched text
+			page.add_redact_annot(rect, fill=(0, 0, 0))  #add a black box over the matched text
 
 #main function to redact keywords and sensitive information in the PDF
 def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
@@ -223,66 +225,133 @@ def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
 	pdf_document.close()
 	
 def get_bert_entities(text):
-
-	#tokenize and pre-fetch logits
 	"""Function to extract entities using BERT."""
+	# Tokenize the input text
 	inputs = tokenizer(text, return_tensors="tf", truncation=True, padding=True)
+	
+	# Perform inference through the BERT model
 	outputs = bert_model(**inputs)
 	logits = outputs.logits
-	predicted_ids = tf.argmax(logits, axis=-1)
 
+	# Get the predicted token IDs and convert them to labels
+	predicted_ids = tf.argmax(logits, axis=-1)
+	
+	# Convert token IDs back to actual tokens
 	tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+	
+	# Map the predicted IDs to tokens
 	predicted_labels = [tokenizer.convert_ids_to_tokens(predicted_ids[0].numpy())]
 	
-	#map BeRT output to entity labels
+	# Create a list of entities (ignoring "O" labels, which mean no entity)
 	entity_labels = []
 	for token, label in zip(tokens, predicted_labels[0]):
-		if label != "O":  #here, "O" means no entity
+		if label != "O":  # "O" means no entity
 			entity_labels.append((token, label))
-
+	
 	return entity_labels
 
-def redact_phone(match,redaction_level):
-	phone = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED PHONE]"
-	elif redaction_level == "MID":
-		#mask phone number with 'XXX-XXX-XXXX'
-		return 'XXX-XXX-' + phone[-4:]
-	elif redaction_level == "HIGH":
-		return fake.phone_number()
+#update (3) (major-2 revamp):
+#implemented nlp/ml into single pass
+#utilized re.sub and re.cache for faster replacement and dict. caching
+#implemented helpr function for synthetic_data gen. and rep.
+#must implement parallelization, better caching and Profiling (cProfile & line_profiler)
+#added: trainer model and pre-trained dataset (in .json)
+#update: stress tested in local win-11 host with CUDA. room for improvement exists
 
-def redact_credit_card(match,redaction_level):
-	cc = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED CREDIT CARD]"
-	elif redaction_level == "MID":
-		#mask credit card with 'XXXX-XXXX-XXXX' (as-per luhn's algo.)
-		return 'XXXX-XXXX-XXXX-' + cc[-4:]
-	elif redaction_level == "HIGH":
-		return fake.credit_card_number()
+def redact_text(text, redaction_level, keyword=None):
+	# Apply keyword redaction if provided
+	if keyword:
+		return text.replace(keyword, "[REDACTED]").replace(f" {keyword} ", " [REDACTED] ")
 
-def redact_ssn(match,redaction_level):
-	ssn = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED SSN]"
-	elif redaction_level == "MID":
-		#mask ssn 'XXX-XX'
-		return 'XXX-XX-' + ssn[-4:]
-	elif redaction_level == "HIGH":
-		return fake.ssn()
+	doc = nlp(text)
+	redacted_text = text
+	
+	# Apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
+	phone_pattern = r"\+?\d[\d\s\-\(\)]{7,15}"
+	credit_card_pattern = r"\b(?:\d[ -]*?){13,16}\b"
+	ssn_pattern = r"\b\d{3}[-]?\d{2}[-]?\d{4}\b"
+	aadhar_pattern = r"\b\d{12}\b"
 
-def redact_aadhar(match,redaction_level):
-	aadhar = match.group(0)
-	if redaction_level == "LOW":
-		return "[REDACTED AADHAR]"
-	elif redaction_level == "MID":
-		#mask aadhaar with 'XXXX-XXXX-' and then leave the rest of digits as open val.
-		return 'XXXX-XXXX-' + aadhar[-4:]
-	elif redaction_level == "HIGH":
-		return fake.ssn()  #aaadhar is 12-digit number, but fake.ssn() can moonlight for gen. format regex discovery 
+	text = re.sub(phone_pattern, lambda match: "[REDACTED]", text)
+	text = re.sub(credit_card_pattern, lambda match: "[REDACTED]", text)
+	text = re.sub(ssn_pattern, lambda match: "[REDACTED]", text)
+	text = re.sub(aadhar_pattern, lambda match: "[REDACTED]", text)
 
-#update (2) (major revamp):
+	# Obtain BERT entities (here, this would be a placeholder)
+	bert_entities = get_bert_entities(text)  # Replace with actual BERT logic
+
+	# Combine BERT and spaCy entities into one list
+	entities_to_redact = []
+
+	# Add BERT entities (PER, ORG, LOC, MISC)
+	if ml_choice_checkbox.get() == 1:  # Placeholder for ML choice
+		print("ML Choice: Selected")
+		for entity, label in bert_entities:
+			if label in ["PER", "ORG", "LOC", "MISC"]:
+				entities_to_redact.append((entity, label))
+	else:
+		print("ML Choice: Not Selected")
+
+	# Add spaCy entities (PERSON, ORG, GPE, DATE)
+	for ent in doc.ents:
+		if ent.label_ in ["PERSON", "ORG", "GPE", "DATE"]:
+			entities_to_redact.append((ent.text, ent.label_))
+
+	# Pre-compute synthetic data for high redaction level
+	synthetic_data = {}
+
+	def get_synthetic_data(label):
+		"""Generate synthetic data for a specific entity label, caching results."""
+		if label not in synthetic_data:
+			if label == "PERSON":
+				synthetic_data[label] = fake.name()
+			elif label == "ORG":
+				synthetic_data[label] = fake.company()
+			elif label == "LOC" or label == "GPE":
+				synthetic_data[label] = fake.city()
+			elif label == "MISC":
+				synthetic_data[label] = fake.word()
+			elif label == "DATE":
+				synthetic_data[label] = fake.date()
+		return synthetic_data[label]
+
+	# Create replacement map for entities and their redacted forms
+	replacement_map = {}
+
+	for entity, label in entities_to_redact:
+		if redaction_level == "LOW":
+			replacement_map[entity] = "[REDACTED]"
+
+		elif redaction_level == "MID":
+			masked_entity = entity[0] + '*' * (len(entity) - 2) + entity[-1] if len(entity) > 2 else entity
+			replacement_map[entity] = masked_entity
+		
+		elif redaction_level == "HIGH":
+			synthetic_entity = get_synthetic_data(label)
+			replacement_map[entity] = synthetic_entity
+
+	# Use regex to replace all entities in one go
+	def replace_entity(match):
+		entity = match.group(0)
+		return replacement_map.get(entity, entity)  # Use the replacement if found, else just return original
+
+	# Build a regex pattern to match any of the entities to perform redaction
+	entity_pattern = re.compile("|".join(re.escape(entity) for entity in replacement_map.keys()))
+	redacted_text = entity_pattern.sub(replace_entity, text)
+
+	# Add the newly identified entities to the training data
+	new_annotation = {
+		"text": text,
+		"entities": [(start, end, label) for start, end, label in doc.ents]
+	}
+
+	# Append new annotation to TRAIN_DATA and save to JSON
+	TRAIN_DATA.append(new_annotation)
+	with open("train_data.json", "w") as f:
+		json.dump(TRAIN_DATA, f, indent=4)
+
+	return redacted_text
+		
 #implemented nlp/ml into single pass
 #utilized re.sub and re.cache for faster replacement and dict. caching
 #implemented helpr function for synthetic_data gen. and rep.
@@ -297,7 +366,7 @@ def redact_text(text, redaction_level, keyword=None):
 	doc = nlp(text)
 	redacted_text = text
 	
-	#apply regex-based redactions for phone numbers, credit cards, SSNs, and aaadhar numbers
+	#apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
 	text = re.sub(phone_pattern, lambda match: redact_phone(match, redaction_level), text)
 	text = re.sub(credit_card_pattern, lambda match: redact_credit_card(match, redaction_level), text)
 	text = re.sub(ssn_pattern, lambda match: redact_ssn(match, redaction_level), text)
@@ -306,10 +375,10 @@ def redact_text(text, redaction_level, keyword=None):
 	#obtain BeRT entities
 	bert_entities = get_bert_entities(text)
 
-	#combine BeRT and spaCy entities into one list 4 a single pass
+	#Combine BeRT and spaCy entities into one list 4 a single pass
 	entities_to_redact = []
 
-	#add BeRT entities (PER, ORG, LOC, MISC)
+	#Add BeRT entities (PER, ORG, LOC, MISC)
 	if ml_choice_checkbox.get() == 1:
 		print("ML Choice: Selected")
 		for entity, label in bert_entities:
@@ -323,10 +392,9 @@ def redact_text(text, redaction_level, keyword=None):
 		if ent.label_ in ["PERSON", "ORG", "GPE", "DATE"]:
 			entities_to_redact.append((ent.text, ent.label_))
 
-	#pre-compute synthetic data 4 high redaction level (to prevent redundant and un-necessary generation)
+	#pre-compute synthetic data 4 high redaction level (to prevent redundant generation)
 	synthetic_data = {}
 
-	#check for every entity before synthetic replacement
 	def get_synthetic_data(label):
 		"""Generate synthetic data for a specific entity label, caching results."""
 		if label not in synthetic_data:
@@ -384,33 +452,27 @@ def redact_text(text, redaction_level, keyword=None):
 
 def preprocess_and_recognize_audio(audio_file):
 
-	#set some ground-work for pre-processing audio (channel set to mono/1 and default rate of 16khz)
 	audio = AudioSegment.from_file(audio_file).set_channels(1).set_frame_rate(16000)
 	processed_file = "/tmp/output-processed-audio.wav"
 	audio.export(processed_file, format="wav")
-
+	
 	recognizer = sr.Recognizer()
-
-	#process/de-synthesis and covert audio to text and pass-onto called function/file loc.
+	
 	with sr.AudioFile(processed_file) as source:
 		audio_data = recognizer.record(source)
 	try:
 		text = recognizer.recognize_sphinx(audio_data)
 		print("Processed Audio Speech:", text)
 		return text
-		
-	#check runs. for un-recognizable/error-prone audio file
 	except sr.UnknownValueError:
 		print("Sorry, the audio could not be deciphered. Please provide a clear .wav/.flacc audio file.")
 	except sr.RequestError as e:
 		print(f"Could not perform conversion: {e}")
-
-	#after tmp. proc. remove file (must revamp code to utilize caching instead of hard-saving tempo. data)
+	
 	os.remove(processed_file)
 
 def drop_and_identify(file_path,grade):
 
-	#from d-n-d input remove the extension and find out pwd (parent working direct.)
 	_, extension = os.path.splitext(file_path)
 
 	if extension == ".pdf":
@@ -516,7 +578,6 @@ def drag_and_drop(grade):
 	root.dnd_bind('<<Drop>>', lambda event:drop_and_identify(event.data,grade))
 	root.mainloop()
 
-#previous UI built in tkinter. changed to customtkinter (be wary of tkinter-customtkinter cross-utilization)
 #set custom color theme
 ctk.set_appearance_mode("dark")  #change to 'Light' or 'Dark' if needed
 ctk.set_default_color_theme("blue")  #dev can choose a different theme
