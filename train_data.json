@@ -1,0 +1,185 @@
+[
+    {
+        "text": "John Doe lives in New York City and his phone number is 123-456-7890.",
+        "entities": [
+            [0, 8, "PERSON"],
+            [22, 34, "GPE"],
+            [44, 58, "PHONE"]
+        ]
+    },
+    {
+        "text": "Apple Inc. announced the launch of their new product in San Francisco on January 10, 2025.",
+        "entities": [
+            [0, 10, "ORG"],
+            [57, 70, "GPE"],
+            [74, 88, "DATE"]
+        ]
+    },
+    {
+        "text": "Jane Smith works at Microsoft and lives in Seattle.",
+        "entities": [
+            [0, 10, "PERSON"],
+            [22, 31, "ORG"],
+            [42, 49, "GPE"]
+        ]
+    },
+    {
+        "text": "The Eiffel Tower is located in Paris, France.",
+        "entities": [
+            [4, 17, "LOCATION"],
+            [22, 27, "GPE"]
+        ]
+    },
+    {
+        "text": "Barack Obama was born on August 4, 1961, in Honolulu.",
+        "entities": [
+            [0, 12, "PERSON"],
+            [20, 32, "DATE"],
+            [36, 44, "GPE"]
+        ]
+    },
+    {
+        "text": "The event will take place at the White House, Washington on July 4th.",
+        "entities": [
+            [32, 43, "LOCATION"],
+            [45, 58, "GPE"],
+            [63, 74, "DATE"]
+        ]
+    },
+    {
+        "text": "Elon Musk, CEO of SpaceX, is often seen in California.",
+        "entities": [
+            [0, 10, "PERSON"],
+            [12, 16, "ORG"],
+            [28, 37, "PERSON"],
+            [51, 60, "GPE"]
+        ]
+    },
+    {
+        "text": "My phone number is 555-123-4567. Call me anytime.",
+        "entities": [
+            [18, 32, "PHONE"]
+        ]
+    },
+    {
+        "text": "I visited Tokyo, Japan last week.",
+        "entities": [
+            [9, 14, "GPE"],
+            [16, 21, "GPE"]
+        ]
+    },
+    {
+        "text": "On the 15th of September 2023, Microsoft made a major acquisition.",
+        "entities": [
+            [3, 15, "DATE"],
+            [17, 26, "ORG"]
+        ]
+    },
+    {
+        "text": "Rihanna's latest album, Anti, was released in 2016.",
+        "entities": [
+            [0, 7, "PERSON"],
+            [28, 32, "DATE"]
+        ]
+    },
+    {
+        "text": "The Great Wall of China is a popular tourist destination.",
+        "entities": [
+            [4, 21, "LOCATION"],
+            [27, 41, "GPE"]
+        ]
+    },
+    {
+        "text": "Albert Einstein was a theoretical physicist born in Ulm, Germany.",
+        "entities": [
+            [0, 14, "PERSON"],
+            [43, 47, "GPE"],
+            [49, 56, "GPE"]
+        ]
+    },
+    {
+        "text": "Google's headquarters are located in Mountain View, California.",
+        "entities": [
+            [0, 6, "ORG"],
+            [39, 56, "GPE"]
+        ]
+    },
+    {
+        "text": "The concert is on Friday, December 10th at Madison Square Garden in New York.",
+        "entities": [
+            [28, 44, "DATE"],
+            [48, 70, "LOCATION"],
+            [74, 82, "GPE"]
+        ]
+    },
+    {
+        "text": "Mark Zuckerberg announced the Facebook rebrand to Meta on October 28, 2021.",
+        "entities": [
+            [0, 13, "PERSON"],
+            [45, 51, "ORG"],
+            [55, 74, "DATE"]
+        ]
+    },
+    {
+        "text": "The United Nations was established on 24th October 1945.",
+        "entities": [
+            [4, 19, "ORG"],
+            [40, 59, "DATE"]
+        ]
+    },
+    {
+        "text": "James Cameron, the director of Titanic, was born in Kapuskasing, Ontario.",
+        "entities": [
+            [0, 12, "PERSON"],
+            [26, 33, "ORG"],
+            [55, 67, "GPE"],
+            [69, 76, "GPE"]
+        ]
+    },
+    {
+        "text": "The COVID-19 pandemic started in 2019 and affected many countries, including Italy and Spain.",
+        "entities": [
+            [4, 11, "MISC"],
+            [26, 30, "DATE"],
+            [58, 63, "GPE"],
+            [68, 73, "GPE"]
+        ]
+    },
+    {
+        "text": "Tesla's Model S was released in 2012.",
+        "entities": [
+            [0, 5, "ORG"],
+            [13, 19, "MISC"],
+            [31, 35, "DATE"]
+        ]
+    },
+    {
+        "text": "Abraham Lincoln, the 16th President of the United States, was assassinated in Washington, D.C.",
+        "entities": [
+            [0, 15, "PERSON"],
+            [23, 25, "DATE"],
+            [64, 83, "GPE"]
+        ]
+    },
+    {
+        "text": "Jennifer Lawrence starred in The Hunger Games and was born in Louisville, Kentucky.",
+        "entities": [
+            [0, 17, "PERSON"],
+            [46, 63, "ORG"],
+            [67, 76, "GPE"],
+            [78, 86, "GPE"]
+        ]
+    },
+    {
+        "text": "The birth of the new child is scheduled for July 15, 2025.",
+        "entities": [
+            [49, 61, "DATE"]
+        ]
+    },
+    {
+        "text": "The Grand Canyon is one of the seven natural wonders of the world.",
+        "entities": [
+            [4, 18, "LOCATION"]
+        ]
+    }
+]
