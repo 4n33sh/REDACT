@@ -226,26 +226,26 @@ def redact_keyword_in_pdf(input_pdf_path, output_pdf_path, keyword=None):
 	
 def get_bert_entities(text):
 	"""Function to extract entities using BERT."""
-	# Tokenize the input text
+	#tokenize the input text
 	inputs = tokenizer(text, return_tensors="tf", truncation=True, padding=True)
 	
-	# Perform inference through the BERT model
+	#perform inference through the BeRT
 	outputs = bert_model(**inputs)
 	logits = outputs.logits
 
-	# Get the predicted token IDs and convert them to labels
+	#get predicted token IDs and convert them to labels
 	predicted_ids = tf.argmax(logits, axis=-1)
 	
-	# Convert token IDs back to actual tokens
+	#convert token IDs back to actual tokens for NLP/NER engine further on..
 	tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
 	
-	# Map the predicted IDs to tokens
+	#map predicted IDs to tokens
 	predicted_labels = [tokenizer.convert_ids_to_tokens(predicted_ids[0].numpy())]
 	
-	# Create a list of entities (ignoring "O" labels, which mean no entity)
+	#create list of entities (ignoring "O" labels, which mean no entity)
 	entity_labels = []
 	for token, label in zip(tokens, predicted_labels[0]):
-		if label != "O":  # "O" means no entity
+		if label != "O":  #as previously mentioned, "O" means no entity
 			entity_labels.append((token, label))
 	
 	return entity_labels
@@ -259,14 +259,14 @@ def get_bert_entities(text):
 #update: stress tested in local win-11 host with CUDA. room for improvement exists
 
 def redact_text(text, redaction_level, keyword=None):
-	# Apply keyword redaction if provided
+	#apply keyword redaction if provided
 	if keyword:
 		return text.replace(keyword, "[REDACTED]").replace(f" {keyword} ", " [REDACTED] ")
 
 	doc = nlp(text)
 	redacted_text = text
 	
-	# Apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
+	#else apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
 	phone_pattern = r"\+?\d[\d\s\-\(\)]{7,15}"
 	credit_card_pattern = r"\b(?:\d[ -]*?){13,16}\b"
 	ssn_pattern = r"\b\d{3}[-]?\d{2}[-]?\d{4}\b"
@@ -277,14 +277,14 @@ def redact_text(text, redaction_level, keyword=None):
 	text = re.sub(ssn_pattern, lambda match: "[REDACTED]", text)
 	text = re.sub(aadhar_pattern, lambda match: "[REDACTED]", text)
 
-	# Obtain BERT entities (here, this would be a placeholder)
+	#obtain BeRT entities (this would be a placeholder)
 	bert_entities = get_bert_entities(text)  # Replace with actual BERT logic
 
-	# Combine BERT and spaCy entities into one list
+	#combine BeRT and spaCy entities into one list (to prevent unnecessary iterations)
 	entities_to_redact = []
 
-	# Add BERT entities (PER, ORG, LOC, MISC)
-	if ml_choice_checkbox.get() == 1:  # Placeholder for ML choice
+	#add beRT entities (PER, ORG, LOC, MISC)
+	if ml_choice_checkbox.get() == 1:  #rep. placeholder for ML choice
 		print("ML Choice: Selected")
 		for entity, label in bert_entities:
 			if label in ["PER", "ORG", "LOC", "MISC"]:
@@ -292,12 +292,12 @@ def redact_text(text, redaction_level, keyword=None):
 	else:
 		print("ML Choice: Not Selected")
 
-	# Add spaCy entities (PERSON, ORG, GPE, DATE)
+	#add spaCy entities (PERSON, ORG, GPE, DATE)
 	for ent in doc.ents:
 		if ent.label_ in ["PERSON", "ORG", "GPE", "DATE"]:
 			entities_to_redact.append((ent.text, ent.label_))
 
-	# Pre-compute synthetic data for high redaction level
+	#already pre-compute synthetic data for high redaction level
 	synthetic_data = {}
 
 	def get_synthetic_data(label):
@@ -315,7 +315,7 @@ def redact_text(text, redaction_level, keyword=None):
 				synthetic_data[label] = fake.date()
 		return synthetic_data[label]
 
-	# Create replacement map for entities and their redacted forms
+	#create replacement map for entities and their redacted forms
 	replacement_map = {}
 
 	for entity, label in entities_to_redact:
@@ -330,22 +330,22 @@ def redact_text(text, redaction_level, keyword=None):
 			synthetic_entity = get_synthetic_data(label)
 			replacement_map[entity] = synthetic_entity
 
-	# Use regex to replace all entities in one go
+	#use regex to replace all entities in one iteration
 	def replace_entity(match):
 		entity = match.group(0)
-		return replacement_map.get(entity, entity)  # Use the replacement if found, else just return original
+		return replacement_map.get(entity, entity)  #use replacement if found, else just return original
 
-	# Build a regex pattern to match any of the entities to perform redaction
+	#build regex pattern to match any of the entities to perform redaction
 	entity_pattern = re.compile("|".join(re.escape(entity) for entity in replacement_map.keys()))
 	redacted_text = entity_pattern.sub(replace_entity, text)
 
-	# Add the newly identified entities to the training data
+	#add  newly identified entities to the training data
 	new_annotation = {
 		"text": text,
 		"entities": [(start, end, label) for start, end, label in doc.ents]
 	}
 
-	# Append new annotation to TRAIN_DATA and save to JSON
+	#append new annotation to TRAIN_DATA and save to JSON
 	TRAIN_DATA.append(new_annotation)
 	with open("train_data.json", "w") as f:
 		json.dump(TRAIN_DATA, f, indent=4)
