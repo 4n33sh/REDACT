@@ -1,3 +1,6 @@
+# @Author: 4n33sh (Aneesh SP) (aneesh.sp222@gmail.com) 
+# @version: v4.5 (as of 06/02/2025)
+
 #! /root/my_virt_envs/bin/python3
 
 #above microprocessor executes code directly form python .venv package. modify to suit your venv. path
@@ -31,13 +34,13 @@ import tensorflow as tf
 from transformers import BertTokenizer, TFBertForTokenClassification
 import unicodedata
 
-#load spaCy model (large) for NLP/NER and faker
+#pre-load spaCy model (large) (user can choose from small/med/large) for NLP/NER and faker 
 
 nlp = spacy.load("en_core_web_lg")	
 fake = Faker()
 
 #load BeRT Tokenizer and model for ML-based entity recog.
-#this will require internet connection (1st time only - later stored in local cache)
+#this will require internet connection (1st time downl. only - later stored in local cache)
 
 tokenizer = BertTokenizer.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
 bert_model = TFBertForTokenClassification.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
@@ -59,8 +62,14 @@ def toggle_case_sensitive():
 def toggle_ml_choice():
 	global use_ml
 	use_ml = ml_choice_checkbox.get()
-	print("ML CheckBox status:", use_ml)
+	print("ML Model CheckBox status:", use_ml)
 
+#func. to handle the NLP Trainer model checkbox toggle
+def toggle_NLP_choice():
+	global utilize_NLP_trainer_model_with_JSON
+	utilize_NLP_trainer_model_with_JSON = NLP_choice_checkbox.get()
+	print("NLP Trainer CheckBox status:", utilize_NLP_trainer_model_with_JSON)
+	
 def toggle_lock():
 
 	#set the 'lock' emoji to unlocked at start
@@ -76,7 +85,7 @@ def toggle_lock():
 		lock_button.configure(text="\U0001f513", fg_color="green", text_color="black")  #green background means unlocked
 		
 def redact_phone(match,redaction_level):
-	
+
 	phone = match.group(0)
 	if redaction_level == "LOW":
 		return "[REDACTED PHONE]"
@@ -87,7 +96,7 @@ def redact_phone(match,redaction_level):
 		return fake.phone_number()
 		
 def redact_credit_card(match,redaction_level):
-	
+
 	cc = match.group(0)
 	if redaction_level == "LOW":
 		return "[REDACTED CREDIT CARD]"
@@ -98,7 +107,7 @@ def redact_credit_card(match,redaction_level):
 		return fake.credit_card_number()
 		
 def redact_ssn(match,redaction_level):
-	
+
 	ssn = match.group(0)
 	if redaction_level == "LOW":
 		return "[REDACTED SSN]"
@@ -109,7 +118,7 @@ def redact_ssn(match,redaction_level):
 		return fake.ssn()
 		
 def redact_aadhar(match,redaction_level):
-	
+
 	aadhar = match.group(0)
 	if redaction_level == "LOW":
 		return "[REDACTED AADHAR]"
@@ -201,7 +210,7 @@ def outputs(text, file_path):
 	
 	#clean the text before sending for txt-to-speech engine
 	#eliminates anyother character (like cyrillic chars and numbers) than A-Z
-	#here 'NFC' means we are considering cyrillic chatacters as pre-accented and one unit
+	#here 'NFC' means we are considering cyrillic/partial-latin chatacters as pre-accented and one unit
 	cleaned_text = re.sub(r'[^a-zA-Z\s]', '', unicodedata.normalize('NFC', text))
 	
 	#calls the text_to_speech function
@@ -301,22 +310,18 @@ def get_bert_entities(text):
 #implemented helpr function for synthetic_data gen. and rep.
 #must implement parallelization, better caching and Profiling (cProfile & line_profiler)
 #added: trainer model and pre-trained dataset (in .json)
-#update: stress tested in local win-11 host with CUDA. room for improvement exists
+#update: stress tested in local win-11 host with CUDA. room for model (parameters) improvement exists
 
 def redact_text(text, redaction_level, keyword=None):
 	#apply keyword redaction if provided
 	if keyword:
 		return text.replace(keyword, "[REDACTED]").replace(f" {keyword} ", " [REDACTED] ")
 
+	#synthesize text (through NLP)
 	doc = nlp(text)
 	redacted_text = text
-	
-	#else apply regex-based redactions for phone numbers, credit cards, SSNs, and Aadhar numbers
-	phone_pattern = r"\+?\d[\d\s\-\(\)]{7,15}"
-	credit_card_pattern = r"\b(?:\d[ -]*?){13,16}\b"
-	ssn_pattern = r"\b\d{3}[-]?\d{2}[-]?\d{4}\b"
-	aadhar_pattern = r"\b\d{12}\b"
 
+	#perform initial RegEx matches
 	text = re.sub(phone_pattern, lambda match: "[REDACTED]", text)
 	text = re.sub(credit_card_pattern, lambda match: "[REDACTED]", text)
 	text = re.sub(ssn_pattern, lambda match: "[REDACTED]", text)
@@ -363,6 +368,7 @@ def redact_text(text, redaction_level, keyword=None):
 	#create replacement map for entities and their redacted forms
 	replacement_map = {}
 
+	#iterate through every entity and label 4 recognized tokens
 	for entity, label in entities_to_redact:
 		if redaction_level == "LOW":
 			replacement_map[entity] = "[REDACTED]"
@@ -390,10 +396,10 @@ def redact_text(text, redaction_level, keyword=None):
 		"entities": [(start, end, label) for start, end, label in doc.ents]
 	}
 
-	#append new annotation to TRAIN_DATA and save to JSON
+	#append new annotation to TRAIN_DATA and save to JSON file formatt
 	TRAIN_DATA.append(new_annotation)
-	with open("train_data.json", "w") as f:
-		json.dump(TRAIN_DATA, f, indent=4)
+	with open("train_data.json", "w") as f_dat_dump:
+		json.dump(TRAIN_DATA, f_dat_dump, indent=4) #set to '4' (indent) for tab width
 
 	return redacted_text
 		
@@ -604,6 +610,8 @@ def drag_and_drop(grade):
 	add_button2.configure(fg_color="white", bg_color="gray", state="normal")
 	add_button3.configure(fg_color="white", bg_color="gray", state="normal")
 	
+	show_sidebar()
+	
 	#Change button styles based on the selected grade
 	if grade == "LOW":
 		add_button1.configure(fg_color="black", bg_color="yellow", state="disabled")
@@ -622,67 +630,101 @@ def drag_and_drop(grade):
 		print("HIGH")
 	root.dnd_bind('<<Drop>>', lambda event:drop_and_identify(event.data,grade))
 	root.mainloop()
+	
+def show_sidebar():
 
+	#show the right sidebar only when any grade button is clicked
+	right_sidebar_frame.grid(row=0, column=2, sticky="nse", padx=10, pady=10)
+
+	#xreate a scrollable frame in the sidebar
+	scrollable_frame = ctk.CTkScrollableFrame(right_sidebar_frame, width=100, height=200)
+	scrollable_frame.grid(row=0, column=0, pady=5, padx=10, sticky="nsew")
+
+	#add some checkboxes for Name, Location, Organization, and Date
+	name_checkbox = ctk.CTkCheckBox(scrollable_frame, text="NAME", command=lambda: print("NAME"))
+	name_checkbox.pack(pady=5)
+
+	location_checkbox = ctk.CTkCheckBox(scrollable_frame, text="LOC/GPE", command=lambda: print("LOC/GPE"))
+	location_checkbox.pack(pady=5)
+
+	organization_checkbox = ctk.CTkCheckBox(scrollable_frame, text="ORG", command=lambda: print("ORG"))
+	organization_checkbox.pack(pady=5)
+
+	date_checkbox = ctk.CTkCheckBox(scrollable_frame, text="DATE/TIME", command=lambda: print("DATE/TIME"))
+	date_checkbox.pack(pady=5)
+	
 #set custom color theme
-ctk.set_appearance_mode("dark")  #change to 'Light' or 'Dark' if needed
-ctk.set_default_color_theme("blue")  #dev can choose a different theme
+ctk.set_appearance_mode("dark")  #change to 'Light' or 'Dark' when needed
+ctk.set_default_color_theme("blue") 
 
+#create main window
 window = ctk.CTk()
-
-window.title("RE-DACT v4.1")
+window.title("RE-DACT v4.5")
 window.geometry("600x400")
-window.resizable(False, False)
+window.resizable(True, True)
 
+#configure grid for expandability
+window.grid_rowconfigure(0, weight=1)
+window.grid_columnconfigure(0, weight=1)
+window.grid_columnconfigure(1, weight=3)
+window.grid_columnconfigure(2, weight=2)  #right side-bar column
+
+#create log file
 logs_name_file = "/root/Desktop/logs-" + time.strftime("%Y%m%d-%H%M%S") + ".txt"
 logs_file = open(logs_name_file, "x")
 logs_file.close()
 
-#function to handle lock toggle
+#variables (pre-def to global)
 locked = False
-
-#variables for case sensitivity and ML choice
 case_sensitive = False
 use_ml = False
 
-#sidebar Frame
-sidebar_frame = ctk.CTkFrame(window, width=300, height=400, corner_radius=10)
-sidebar_frame.pack(side="left", fill="y", padx=10, pady=10)
+#sidebar frame (Left)
+sidebar_frame = ctk.CTkFrame(window, corner_radius=10)
+sidebar_frame.grid(row=0, column=0, sticky="nsw", padx=10, pady=10)
 
-#Main frame
-main_frame = ctk.CTkFrame(window, width=500, height=400, corner_radius=10)
-main_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+#main frame (Center)
+main_frame = ctk.CTkFrame(window, corner_radius=10)
+main_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+
+#right sidebar frame (Expands with selection)
+right_sidebar_frame = ctk.CTkFrame(window, corner_radius=10)
+
+#config. frames to expand dynamically
+main_frame.grid_rowconfigure(0, weight=1)
+main_frame.grid_columnconfigure(0, weight=1)
 
 #label and entry in the main frame
-label1 = ctk.CTkLabel(main_frame, text="\nEnter The keyword to Redact: \n", font=("Arial", 15), text_color="white")
-label1.pack(pady=(10, 5))
+label1 = ctk.CTkLabel(main_frame, text="\nEnter The keyword to Redact: \n", font=("Arial", 15))
+label1.grid(row=0, column=0, pady=(10, 5), sticky="n")
 
-entry1 = ctk.CTkEntry(main_frame, placeholder_text="Enter keyword here...", width=250, text_color="white")
-entry1.pack(pady=5)
+entry1 = ctk.CTkEntry(main_frame, placeholder_text="Enter keyword here...", width=200)
+entry1.grid(row=1, column=0, pady=5)
 
-#lock button in sidebar
 lock_button = ctk.CTkButton(main_frame, text="\U0001f513", command=toggle_lock, width=50, fg_color="green")
-lock_button.pack(pady=(10, 10))
+lock_button.grid(row=2, column=0, pady=(10, 10))
 
-#grade selector label in the sidebar
-label2 = ctk.CTkLabel(main_frame, text="\nChoose the Grade of Redaction: \n", font=("Arial", 15), text_color="white")
-label2.pack(pady=(10, 5))
+#grade selector label
+label2 = ctk.CTkLabel(main_frame, text="\nChoose the Grade of Redaction: \n", font=("Arial", 15))
+label2.grid(row=3, column=0, pady=(10, 5))
 
-#grade buttons in the sidebar_frame
-add_button1 = ctk.CTkButton(main_frame, text="GRADE - 1 (LOW)", command=lambda: drag_and_drop("LOW"), width=150)
-add_button1.pack(pady=5)
+#grade buttons (each button will trigger the right sidebar to show up)
+add_button1 = ctk.CTkButton(main_frame, text="Grade - 1 (LOW)", command=lambda: drag_and_drop("LOW"))
+add_button1.grid(row=4, column=0, pady=10)
 
-add_button2 = ctk.CTkButton(main_frame, text="GRADE - 2 (MID)", command=lambda: drag_and_drop("MID"), width=150)
-add_button2.pack(pady=5)
+add_button2 = ctk.CTkButton(main_frame, text="Grade - 2 (MID)", command=lambda: drag_and_drop("MID"))
+add_button2.grid(row=5, column=0, pady=10)
 
-add_button3 = ctk.CTkButton(main_frame, text="GRADE - 3 (HIGH)", command=lambda: drag_and_drop("HIGH"), width=150)
-add_button3.pack(pady=5)
+add_button3 = ctk.CTkButton(main_frame, text="Grade - 3 (HIGH)", command=lambda: drag_and_drop("HIGH"))
+add_button3.grid(row=6, column=0, pady=10)
 
-#case-sensitivity checkbox
 case_sensitive_checkbox = ctk.CTkCheckBox(sidebar_frame, text="Case Sensitive", command=toggle_case_sensitive)
-case_sensitive_checkbox.pack(pady=40)
+case_sensitive_checkbox.pack(pady=20)
 
-#ML choice checkbox
-ml_choice_checkbox = ctk.CTkCheckBox(sidebar_frame, text="   ML Model", command=toggle_ml_choice)
-ml_choice_checkbox.pack(pady=30)
+ml_choice_checkbox = ctk.CTkCheckBox(sidebar_frame, text="ML Model", command=toggle_ml_choice)
+ml_choice_checkbox.pack(pady=20)
+
+NLP_choice_checkbox = ctk.CTkCheckBox(sidebar_frame, text="NLP Trainer", command=toggle_NLP_choice)
+NLP_choice_checkbox.pack(pady=20)
 
 window.mainloop()
