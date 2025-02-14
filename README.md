@@ -141,6 +141,8 @@ After redaction has been performed, **audio** (.wav, .flacc), **document** (.pdf
 
 - **[19-01-2025]** : Stress-testing model(s) with CUDA for faster model inference and offloading CPU work. Multiprocessing undergoing tests and monitoring with perf & strace.
 
+- **[07-02-2025]** : Added an authentication function to check for forgery like changes in photo gradiation (like photoshop) and digital signature correlation.
+
 ---
 
 # Contribution
