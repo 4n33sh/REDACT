@@ -8,7 +8,7 @@
 <img src="https://img.shields.io/badge/python_->=%203.1-blue"> 
 <img src="https://img.shields.io/badge/Maintained%3F-Yes-CD8335"> 
 <img src="https://img.shields.io/badge/docs-latest-green.svg">
-<img src="https://img.shields.io/badge/Version-v4.1-yellow">
+<img src="https://img.shields.io/badge/Version-v4.5-yellow">
 <img src="https://img.shields.io/badge/Developed%20on-Kali%20Linux-blueviolet">
 
 ---
@@ -69,7 +69,7 @@ After redaction has been performed, **audio** (.wav, .flacc), **document** (.pdf
 
 # Installation & Running
 
-* (optional) **Create & activate** new python **virtual (.venv) environment** :  ``` python3 -m venv ~/your/preffered/path && source ~/your/preffered/path/bin/activate ```
+* (optional) **Create & activate** new python **virtual (.venv) environment** :  ``` python3 -m venv ~/your/preffered/path && source ~/your/preffered/path/bin/activate && pip install --upgrade pip setuptools wheel ```
 
 * **Clone** repo into your preferred directory : ``` git clone https://github.com/4n33sh/REDACT.git ```
 
