@@ -19,7 +19,7 @@ tensorboard-data-server==0.7.2
 tensorflow==2.18.0
 scikit-learn==1.5.2
 diff==2023.12.6
-transformers==4.46.3
+transformers==4.48.0
 customtkinter==5.2.2
 unicodedata==1.1.1
 os==0.1.4
